@@ -1,4 +1,5 @@
-/* Replace with your SQL commands */
+DROP TABLE IF EXISTS products;
+
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR (255) NOT NULL,
