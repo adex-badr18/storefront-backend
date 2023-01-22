@@ -2,14 +2,15 @@
   "name": "storefront_backend",
   "version": "0.1.0",
   "description": "",
-  "main": "server.ts",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon dist/server.js",
     "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess \"node ./dist/server.js\"",
     "jasmine": "jasmine-ts",
     "migrate": "db-migrate --env test up && db-migrate up",
     "test": "ENV=test db-migrate --env test up && tsc && jasmine && db-migrate db:drop test",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "dev": "tsc && npm run start"
   },
   "author": "Udacity",
   "license": "ISC",
