@@ -12,10 +12,10 @@ const index = async (_req: Request, res: Response) => {
         }
         res.json(products);
     } catch (err) {
-        res.status(400)
-        res.json(err)
+        res.status(400);
+        res.json(err);
     }
-}
+};
 
 const show = async (req: Request, res: Response) => {
     const product = await store.show(req.params.id);
@@ -25,10 +25,10 @@ const show = async (req: Request, res: Response) => {
         }
         res.send('Found zero record.');
     } catch (err) {
-        res.status(400)
-        res.json(err)
+        res.status(400);
+        res.json(err);
     }
-}
+};
 
 const create = async (req: Request, res: Response) => {
     try {
@@ -37,25 +37,25 @@ const create = async (req: Request, res: Response) => {
             name: req.body.name,
             price: req.body.price,
             category: req.body.category
-        }
+        };
 
         const newProduct = store.create(product);
         res.json(newProduct);
     } catch (err) {
-        res.status(400)
-        res.json(err)
+        res.status(400);
+        res.json(err);
     }
-}
+};
 
 const delete_product = async (req: Request, res: Response) => {
     try {
         const deleted = await store.delete(req.params.id);
         res.json(deleted);
     } catch (err) {
-        res.status(400)
-        res.json(err)
+        res.status(400);
+        res.json(err);
     }
-}
+};
 
 // UPDATE ROUTE
 // const update = async (req: Request, res: Response) => {
@@ -82,7 +82,7 @@ const product_routes = (app: express.Application) => {
     app.post('/products', create);
     app.delete('/products/:id', delete_product);
     // app.put('/weapons/:id', update);
-}
+};
 // ------Express routes end
 
 export default product_routes;
