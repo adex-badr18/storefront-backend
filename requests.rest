@@ -1,0 +1,45 @@
+GET http://localhost:3000/
+
+
+###
+POST http://localhost:3000/user/signup
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Mike",
+    "username": "mike",
+    "password_hash": "mike123"
+}
+
+###
+POST http://localhost:3000/user/login
+Content-Type: application/json
+
+{
+    "username": "mike",
+    "password": "mike123"
+}
+
+###
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJGcmVkIiwibGFzdE5hbWUiOiJCb2IiLCJ1c2VybmFtZSI6ImZyZWQiLCJpYXQiOjE2NzQ4MTI2NTgsImV4cCI6MTY3NDgxMjk1OH0.eQMfKZlBn-ceZqry46NWK374QsSZFKA-I6gJu3kaWbE
+
+###
+GET http://localhost:3000/user/adam
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJGcmVkIiwibGFzdE5hbWUiOiJCb2IiLCJ1c2VybmFtZSI6ImZyZWQiLCJpYXQiOjE2NzQ4MTI2NTgsImV4cCI6MTY3NDgxMjk1OH0.eQMfKZlBn-ceZqry46NWK374QsSZFKA-I6gJu3kaWbE
+
+###
+PUT http://localhost:3000/user/update/adam
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IkZyZWQiLCJlbWFpbCI6ImZyZWRAZ21haWwuY29tIiwiaWF0IjoxNjc0NzIzMDQyLCJleHAiOjE2NzQ3MjMwODJ9.rdYXk0ZbGQiKu7oN1J0ofMHpua2jUEcRn84ib670Lz8
+
+###
+DELETE http://localhost:3000/user/delete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IkZyZWQiLCJlbWFpbCI6ImZyZWRAZ21haWwuY29tIiwiaWF0IjoxNjc0NzIzMDQyLCJleHAiOjE2NzQ3MjMwODJ9.rdYXk0ZbGQiKu7oN1J0ofMHpua2jUEcRn84ib670Lz8
+
+{
+     "firstName": "Adam",
+    "lastName": "Alli",
+    "username": "adam",
+    "password_hash": "adam123"
+}

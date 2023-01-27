@@ -1,5 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { Product, ProductStore } from '../models/product';
+import jwt from 'jsonwebtoken';
+import verifyAuthToken from '../middleware/verifyAuthToken';;
 
 const store = new ProductStore();
 
@@ -44,19 +46,18 @@ const getProductByCategory = async (req: Request, res: Response) => {
 };
 
 const createProduct = async (req: Request, res: Response) => {
-    try {
-        const product: Product = {
-            id: req.body.id,
-            name: req.body.name,
-            price: req.body.price,
-            category: req.body.category
-        };
+    const product: Product = {
+        id: req.body.id,
+        name: req.body.name,
+        price: req.body.price,
+        category: req.body.category
+    };
 
+    try {
         const newProduct = store.create(product);
         res.json(newProduct);
     } catch (err) {
-        res.status(400);
-        res.json(err);
+        res.status(400).json(err);
     }
 };
 
@@ -79,10 +80,9 @@ const updateProduct = async (req: Request, res: Response) => {
         category: req.body.category
     }
 
-    const updated = await store.update(product)
-    res.json(updated)
     try {
-        res.send('this is the EDIT route')
+        const updated = await store.update(product)
+        res.json(updated)
     } catch (err) {
         res.status(400)
         res.json(err)
@@ -96,9 +96,9 @@ const product_routes = (app: express.Application) => {
     app.get('/products', getAllProducts);
     app.get('/product/:id', getProductById);
     app.get('/products/:category', getProductByCategory);
-    app.post('/product/create', createProduct);
-    app.delete('/product/delete/:id', deleteProduct);
-    app.put('/product/update/:id', updateProduct);
+    app.post('/product/create', verifyAuthToken, createProduct);
+    app.delete('/product/delete/:id', verifyAuthToken, deleteProduct);
+    app.put('/product/update/:id', verifyAuthToken, updateProduct);
 };
 // ------Express routes end
 

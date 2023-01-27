@@ -11,7 +11,7 @@ dotenv_1.default.config();
 const pepper = process.env.BCRYPT_PASSWORD;
 const saltRounds = process.env.SALT_ROUNDS;
 class Users {
-    async index() {
+    async getAllUsers() {
         try {
             // @ts-ignore
             const conn = await database_1.default.connect();
@@ -24,7 +24,7 @@ class Users {
             throw new Error(`${error}`);
         }
     }
-    async show(username) {
+    async getUserByUsername(username) {
         try {
             // @ts-ignore
             const conn = await database_1.default.connect();
@@ -37,13 +37,18 @@ class Users {
             throw new Error(`${error}`);
         }
     }
-    async create(u) {
+    async createUser(u) {
         try {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const sql = 'INSERT INTO users (firstName, lastName, username, password_hash) VALUES ($1, $2, $3, $4) RETURNING *';
             const password_hash = bcrypt_1.default.hashSync(u.password + pepper, parseInt(saltRounds));
-            const result = await conn.query(sql, [u.firstName, u.lastName, u.username, password_hash]);
+            const result = await conn.query(sql, [
+                u.firstName,
+                u.lastName,
+                u.username,
+                password_hash
+            ]);
             const user = result.rows[0];
             conn.release();
             return user;
@@ -53,23 +58,48 @@ class Users {
         }
     }
     async authenticate(username, password) {
-        try {
-            // @ts-ignore
-            const conn = await database_1.default.connect();
-            const sql = 'SELECT password FROM users WHERE username=($1)';
-            const result = await conn.query(sql, [username]);
-            console.log(password + pepper);
-            if (result.rows.length) {
-                const user = result.rows[0];
-                console.log(user);
-                if (bcrypt_1.default.compareSync(password + pepper, user.password)) {
-                    return user;
-                }
+        const connection = await database_1.default.connect();
+        const sql = 'SELECT * FROM users WHERE username=($1)';
+        const result = await connection.query(sql, [username]);
+        if (result.rows.length) {
+            const user = result.rows[0];
+            if (bcrypt_1.default.compareSync(password + pepper, user.password)) {
+                return user;
             }
-            return null;
+            else {
+            }
+        }
+        return null;
+    }
+    async updateUser(u) {
+        try {
+            const connection = await database_1.default.connect();
+            const sql = "UPDATE users SET firstName=$1, lastName=$2) WHERE username=$3";
+            const result = await connection.query(sql, [
+                u.firstName,
+                u.lastName,
+                u.username
+            ]);
+            const user = result.rows[0];
+            connection.release();
+            return user;
         }
         catch (error) {
-            throw new Error(`Authentication failed for user (${username}): ${error}`);
+            throw new Error('An error occur while updating product:' + error);
+        }
+    }
+    async deleteUser(u) {
+        try {
+            const sql = 'DELETE FROM users WHERE username=($1)';
+            // @ts-ignore
+            const conn = await database_1.default.connect();
+            const result = await conn.query(sql, [u.username]);
+            const user = result.rows[0];
+            conn.release();
+            return user;
+        }
+        catch (err) {
+            throw new Error(`Could not delete user. Error: ${err}`);
         }
     }
 }

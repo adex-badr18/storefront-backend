@@ -47,7 +47,6 @@ if (ENV === 'dev') {
 client.connect((err) => {
     if (err)
         throw err;
-    console.log('Connected');
-    console.log(PG_PASSWORD);
+    console.log('Database connected successfully');
 });
 exports.default = client;
