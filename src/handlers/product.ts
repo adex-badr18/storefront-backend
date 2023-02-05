@@ -44,18 +44,6 @@ const getProductByCategory = async (req: Request, res: Response) => {
     }
 };
 
-const getTopFiveProducts = async (req: Request, res: Response) => {
-    try {
-        const topFive = await store.topFiveProducts();
-        if (topFive === null) {
-            return res.send('Found zero record.');
-        }
-        res.json({ message: `Found ${topFive.length} records only.`, topFiveData: topFive });
-    } catch (err) {
-        res.status(400).json(err);
-    }
-};
-
 const createProduct = async (req: Request, res: Response) => {
     const product: Product = {
         name: req.body.name,
@@ -90,7 +78,6 @@ const product_routes = (app: express.Application) => {
     app.get('/products', getAllProducts);
     app.get('/product/:id', getProductById);
     app.get('/products/:category', getProductByCategory);
-    app.get('/products/top-five', getTopFiveProducts);
     app.post('/product/create', verifyAuthToken, createProduct);
     app.delete('/product/delete/:id', verifyAuthToken, deleteProduct);
 };

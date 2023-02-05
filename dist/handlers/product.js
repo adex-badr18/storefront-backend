@@ -45,15 +45,11 @@ const getProductByCategory = async (req, res) => {
         res.status(400).json(err);
     }
 };
-const getTopFiveProducts = async (req, res) => {
+const getTopFiveProducts = async (_req, res) => {
     try {
-        console.log('endpoint reached');
         const topFive = await store.topFiveProducts();
-        console.log('topFive function called');
-        console.log(topFive);
         if (topFive === null) {
             return res.send('Found zero record.');
-            // return res.json(topFive);
         }
         res.json({ message: `Found ${topFive.length} records only.`, topFiveData: topFive });
     }

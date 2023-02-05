@@ -86,15 +86,12 @@ class ProductStore {
     async topFiveProducts() {
         try {
             const conn = await database_1.default.connect();
-            const sql = 'SELECT p.id, p.name, p.price, p.category, COUNT(*) order_count FROM products p JOIN orders o ON p.id=o.product_id GROUP BY 1 ORDER BY 5 LIMIT 5';
+            const sql = 'SELECT p.id, p.name, p.price, p.category, COUNT(*) order_count FROM products p JOIN orders o ON p.id=o.product_id GROUP BY p.id ORDER BY COUNT(*) LIMIT 5';
             const result = await conn.query(sql);
             conn.release();
             if (result.rows.length === 0)
                 return null;
             const topFive = result.rows;
-            console.log(JSON.stringify(topFive));
-            console.log();
-            console.log(topFive);
             return topFive;
         }
         catch (error) {
