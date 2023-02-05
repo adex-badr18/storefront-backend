@@ -1,64 +1,14 @@
 import client from '../database';
 
-enum OrderStatus {
-  active = 'active',
-  complete = 'complete'
-}
-
 export type Order = {
-  id: number;
+  id?: number;
   product_id: number;
   quantity: number;
   user_id: number;
-  status: OrderStatus;
+  status: string;
 };
 
 export class OrderStore {
-  async getAllOrders(): Promise<Order[]> {
-    // a method that returns a list of all items in the database.
-    try {
-      const conn = await client.connect(); // connect to the database
-      const sql = 'SELECT * FROM orders'; // write the sql query
-      const result = await conn.query(sql); // run the sql query on the database
-      conn.release(); // close database connection
-      return result.rows; // return the rows contained in the database query result
-    } catch (error) {
-      throw new Error(`Error fetching data: ${error}`);
-    }
-  }
-
-  async getOrderById(id: string): Promise<Order> {
-    try {
-      const sql = 'SELECT * FROM orders WHERE id=($1)';
-      // @ts-ignore
-      const conn = await client.connect();
-
-      const result = await conn.query(sql, [id]);
-
-      conn.release();
-
-      return result.rows[0];
-    } catch (err) {
-      throw new Error(`Could not find order with id ${id}. Error: ${err}`);
-    }
-  }
-
-  async getOrdersByStatus(status: string): Promise<Order[]> {
-    try {
-      const sql = 'SELECT * FROM orders WHERE status=($1)';
-      // @ts-ignore
-      const conn = await client.connect();
-
-      const result = await conn.query(sql, [status]);
-      const products = result.rows;
-      conn.release();
-
-      return products;
-    } catch (err) {
-      throw new Error(`Could not find items with status ${status}. Error: ${err}`);
-    }
-  }
-
   async createOrder(o: Order): Promise<Order> {
     try {
       const sql =
@@ -74,42 +24,72 @@ export class OrderStore {
       ]);
 
       const order = result.rows[0];
-
       conn.release();
-
       return order;
     } catch (err) {
       throw new Error(`Could not add new order. Error: ${err}`);
     }
   }
 
-  async updateOrder(o: Order): Promise<Order> {
+  async getAllOrders(): Promise<Order[]> {
+    // a method that returns a list of all items in the database.
     try {
-      const connection = await client.connect();
-      const sql =
-        "UPDATE products SET product_id=$1, quantity=$2, user_id=$3, status='$4') WHERE id=$5";
-      const result = await connection.query(sql, [
-        o.product_id,
-        o.quantity,
-        o.user_id,
-        o.status,
-        o.id,
-      ]);
-      const product = result.rows[0];
-      connection.release();
-      return product;
+      const conn = await client.connect(); // connect to the database
+      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id'; // write the sql query
+      const result = await conn.query(sql); // run the sql query on the database
+      conn.release(); // close database connection
+      return result.rows; // return the rows contained in the database query result
     } catch (error) {
-      throw new Error('An error occur while updating product:' + error);
+      throw new Error(`Error fetching data: ${error}`);
     }
   }
 
-  async deleteOrder(id: string): Promise<Order> {
+  async getOrderById(id: number): Promise<Order | null> {
     try {
-      const sql = 'DELETE FROM orders WHERE id=($1)';
+      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.user_id=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
       const result = await conn.query(sql, [id]);
+
+      if (result.rows.length === 0) return null;
+
+      conn.release();
+
+      return result.rows[0];
+    } catch (err) {
+      throw new Error(`Could not find order with id ${id}. Error: ${err}`);
+    }
+  }
+
+  async getOrdersByStatus(status: string): Promise<Order[] | null> {
+    try {
+      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status=($1)';
+      // @ts-ignore
+      const conn = await client.connect();
+
+      const result = await conn.query(sql, [status]);
+
+      if (result.rows.length === 0) return null
+
+      const orders = result.rows;
+      conn.release();
+
+      return orders;
+    } catch (err) {
+      throw new Error(`Could not fetch orders. Error: ${err}`);
+    }
+  }
+
+  async deleteOrder(id: number): Promise<Order | null> {
+    try {
+      const sql = 'DELETE FROM orders WHERE id=($1) RETURNING *';
+      // @ts-ignore
+      const conn = await client.connect();
+
+      const result = await conn.query(sql, [id]);
+
+      if (result.rows.length === 0) return null
 
       const order = result.rows[0];
 
@@ -118,6 +98,38 @@ export class OrderStore {
       return order;
     } catch (err) {
       throw new Error(`Could not delete order. Error: ${err}`);
+    }
+  }
+
+  async userActiveOrders(user_id: number): Promise<Order[] | null> {
+    try {
+      const connection = await client.connect();
+      const sql =
+        "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='active' AND o.user_id=($1) ORDER BY amount DESC";
+      const result = await connection.query(sql, [user_id]);
+      connection.release();
+
+      if (result.rows.length === 0) return null
+
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error fetching active orders: ${error}`);
+    }
+  }
+  async userCompletedOrders(user_id: number): Promise<Order[] | null> {
+    try {
+      const connection = await client.connect();
+      const sql =
+        "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='complete' AND o.user_id=($1) ORDER BY amount DESC";
+      const result = await connection.query(sql, [user_id]);
+
+      connection.release();
+
+      if (result.rows.length === 0) return null
+
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error fetching completed orders: ${error}`);
     }
   }
 }

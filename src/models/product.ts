@@ -21,13 +21,16 @@ export class ProductStore {
     }
   }
 
-  async showProductById(id: string): Promise<Product> {
+  async showProductById(id: number): Promise<Product | null> {
     try {
       const sql = 'SELECT * FROM products WHERE id=($1)';
       // @ts-ignore
       const conn = await client.connect();
-
       const result = await conn.query(sql, [id]);
+
+      if (result.rows.length === 0) {
+        return null;
+      }
 
       conn.release();
 
@@ -37,14 +40,18 @@ export class ProductStore {
     }
   }
 
-  async showProductByCategory(category: string): Promise<Product[]> {
+  async showProductByCategory(category: string): Promise<Product[] | null> {
     try {
       const sql = 'SELECT * FROM products WHERE category=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
       const result = await conn.query(sql, [category]);
-      const products = result.rows;
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      const products: Product[] = result.rows;
       conn.release();
 
       return products;
@@ -52,29 +59,6 @@ export class ProductStore {
       throw new Error(`Could not find items with category ${category}. Error: ${err}`);
     }
   }
-
-  // async topFive(): Promise<Product[] | string> {
-  //   try {
-  //     const connection = await client.connect();
-
-  //     const sql =
-  //       'SELECT p.id, p.productname, sum(quantity) quantity ' +
-  //       'FROM order_products op ' +
-  //       'JOIN products p ON op.productid = p.id ' +
-  //       'GROUP BY p.id ' +
-  //       'ORDER BY sum(quantity) DESC LIMIT 5';
-
-  //     const result = await connection.query(sql);
-  //     connection.release();
-  //     const products = result.rows;
-  //     console.log(JSON.stringify(products));
-  //     return products;
-  //   } catch (error) {
-  //     throw new Error(
-  //       `Could not find products the most popular products. Error: ${error}`
-  //     );
-  //   }
-  // }
 
   async create(p: Product): Promise<Product> {
     try {
@@ -85,50 +69,59 @@ export class ProductStore {
 
       const result = await conn.query(sql, [p.name, p.price, p.category]);
 
-      const weapon = result.rows[0];
+      const product: Product = result.rows[0];
 
       conn.release();
 
-      return weapon;
-    } catch (err) {
-      throw new Error(`Could not add new book ${p.name}. Error: ${err}`);
-    }
-  }
-
-  async update(p: Product): Promise<Product> {
-    try {
-      const connection = await client.connect();
-      const sql =
-        "UPDATE products SET name='$1', price=2$, category='$3') WHERE id= $4";
-      const result = await connection.query(sql, [
-        p.name,
-        p.price,
-        p.category,
-        p.id,
-      ]);
-      const product = result.rows[0];
-      connection.release();
       return product;
-    } catch (error) {
-      throw new Error('An error occur while updating product:' + error);
+    } catch (err) {
+      throw new Error(`Could not add new product "${p.name}". Error: ${err}`);
     }
   }
 
-  async delete(id: string): Promise<Product> {
+  async delete(id: number): Promise<Product | null> {
     try {
-      const sql = 'DELETE FROM products WHERE id=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
+      const sql = 'DELETE FROM products WHERE id=($1) RETURNING *';
       const result = await conn.query(sql, [id]);
 
-      const product = result.rows[0];
+      if (result.rows.length === 0) {
+        return null;
+      }
 
+      const product: Product = result.rows[0];
       conn.release();
-
       return product;
     } catch (err) {
       throw new Error(`Could not delete book ${id}. Error: ${err}`);
+    }
+  }
+
+  async topFiveProducts(): Promise<Product[] | null> {
+    try {
+      const conn = await client.connect();
+
+      const sql = 'SELECT p.id, p.name, p.price, p.category, COUNT(*) order_count FROM products p JOIN orders o ON p.id=o.product_id GROUP BY 1 ORDER BY 5 LIMIT 5';
+
+      const result = await conn.query(sql);
+
+      conn.release();
+
+      if (result.rows.length === 0) return null;
+
+      const topFive: Product[] = result.rows;
+
+      console.log(JSON.stringify(topFive));
+      console.log();
+      console.log(topFive);
+
+      return topFive;
+    } catch (error) {
+      throw new Error(
+        `Error fetching the top five products: ${error}`
+      );
     }
   }
 }
