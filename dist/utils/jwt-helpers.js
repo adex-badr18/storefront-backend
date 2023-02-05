@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jwtTokens = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-function jwtTokens({ id, firstName, lastName, username }) {
-    const user = { id, firstName, lastName, username };
-    const accessToken = jsonwebtoken_1.default.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+function jwtTokens(user) {
+    // const user = { id, firstName, lastName, username };
+    const accessToken = jsonwebtoken_1.default.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' });
     return { accessToken };
 }
 exports.jwtTokens = jwtTokens;

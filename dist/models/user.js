@@ -9,7 +9,7 @@ const database_1 = __importDefault(require("../database"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const pepper = process.env.BCRYPT_PASSWORD;
-const saltRounds = process.env.SALT_ROUNDS;
+const saltRounds = +process.env.SALT_ROUNDS;
 class Users {
     async getAllUsers() {
         try {
@@ -17,6 +17,9 @@ class Users {
             const conn = await database_1.default.connect();
             const sql = 'SELECT * FROM users';
             const users = await conn.query(sql);
+            if (users.rows.length === 0) {
+                return null;
+            }
             conn.release();
             return users.rows;
         }
@@ -31,6 +34,8 @@ class Users {
             const sql = 'SELECT * FROM users WHERE username=($1)';
             const user = await conn.query(sql, [username]);
             conn.release();
+            if (user.rows.length === 0)
+                return null;
             return user.rows[0];
         }
         catch (error) {
@@ -41,13 +46,14 @@ class Users {
         try {
             // @ts-ignore
             const conn = await database_1.default.connect();
-            const sql = 'INSERT INTO users (firstName, lastName, username, password_hash) VALUES ($1, $2, $3, $4) RETURNING *';
-            const password_hash = bcrypt_1.default.hashSync(u.password + pepper, parseInt(saltRounds));
+            const sql = 'INSERT INTO users (firstName, lastName, username, password) VALUES ($1, $2, $3, $4) RETURNING *';
+            const salt = bcrypt_1.default.genSaltSync(saltRounds);
+            const hash = bcrypt_1.default.hashSync(u.password, salt);
             const result = await conn.query(sql, [
                 u.firstName,
                 u.lastName,
                 u.username,
-                password_hash
+                hash
             ]);
             const user = result.rows[0];
             conn.release();
@@ -58,42 +64,30 @@ class Users {
         }
     }
     async authenticate(username, password) {
-        const connection = await database_1.default.connect();
-        const sql = 'SELECT * FROM users WHERE username=($1)';
-        const result = await connection.query(sql, [username]);
-        if (result.rows.length) {
-            const user = result.rows[0];
-            if (bcrypt_1.default.compareSync(password + pepper, user.password)) {
-                return user;
-            }
-            else {
-            }
-        }
-        return null;
-    }
-    async updateUser(u) {
         try {
             const connection = await database_1.default.connect();
-            const sql = "UPDATE users SET firstName=$1, lastName=$2) WHERE username=$3";
-            const result = await connection.query(sql, [
-                u.firstName,
-                u.lastName,
-                u.username
-            ]);
-            const user = result.rows[0];
-            connection.release();
-            return user;
+            const sql = 'SELECT * FROM users WHERE username=($1)';
+            const result = await connection.query(sql, [username]);
+            if (result.rows.length) {
+                const user = result.rows[0];
+                if (bcrypt_1.default.compareSync(password, user.password)) {
+                    return user;
+                }
+            }
+            return null;
         }
         catch (error) {
-            throw new Error('An error occur while updating product:' + error);
+            throw new Error(`Authentication failed for user (${username}): ${error}`);
         }
     }
-    async deleteUser(u) {
+    async deleteUser(username) {
         try {
-            const sql = 'DELETE FROM users WHERE username=($1)';
+            const sql = 'DELETE FROM users WHERE username=($1) RETURNING *';
             // @ts-ignore
             const conn = await database_1.default.connect();
-            const result = await conn.query(sql, [u.username]);
+            const result = await conn.query(sql, [username]);
+            if (result.rows.length === 0)
+                return null;
             const user = result.rows[0];
             conn.release();
             return user;

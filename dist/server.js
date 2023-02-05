@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const product_1 = __importDefault(require("./handlers/product"));
 const user_1 = __importDefault(require("./handlers/user"));
-const dotenv_1 = __importDefault(require("dotenv"));
+const order_1 = __importDefault(require("./handlers/order"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const address = '0.0.0.0:3000';
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 });
 (0, product_1.default)(app);
 (0, user_1.default)(app);
+(0, order_1.default)(app);
 app.listen(3000, () => {
     console.log(`Running app on ${address}`);
 });
