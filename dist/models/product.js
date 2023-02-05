@@ -83,20 +83,5 @@ class ProductStore {
             throw new Error(`Could not delete book ${id}. Error: ${err}`);
         }
     }
-    async topFiveProducts() {
-        try {
-            const conn = await database_1.default.connect();
-            const sql = 'SELECT p.id, p.name, p.price, p.category, COUNT(*) order_count FROM products p JOIN orders o ON p.id=o.product_id GROUP BY p.id ORDER BY COUNT(*) LIMIT 5';
-            const result = await conn.query(sql);
-            conn.release();
-            if (result.rows.length === 0)
-                return null;
-            const topFive = result.rows;
-            return topFive;
-        }
-        catch (error) {
-            throw new Error(`Error fetching the top five products: ${error}`);
-        }
-    }
 }
 exports.ProductStore = ProductStore;

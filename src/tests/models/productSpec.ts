@@ -1,7 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { Product, ProductStore } from '../product';
-import client from '../..//database';
-import verifyAuthToken from '../../middleware/verifyAuthToken';
+import { Product, ProductStore } from '../../models/product';
+import client from '../../database';
 
 const store = new ProductStore();
 const categoriesArray: Product[] | null = [
@@ -68,10 +66,5 @@ describe('Product model test suite', () => {
         const deleted = await store.delete(50000);
 
         expect(deleted).toBeNull();
-    });
-
-    it('topFiveProducts() should return an array of objects with length above zero', async () => {
-        const topFive = await store.topFiveProducts();
-        expect(topFive!.length).toBeGreaterThan(0);
     });
 });

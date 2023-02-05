@@ -1,4 +1,4 @@
-import { User, Users } from '../user';
+import { User, Users } from '../../models/user';
 import client from '../../database';
 
 const store = new Users();

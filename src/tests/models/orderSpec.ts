@@ -1,7 +1,7 @@
 import client from '../../database';
-import { Order, OrderStore } from '../order';
-import { Product, ProductStore } from '../product';
-import { User, Users } from '../user';
+import { Order, OrderStore } from '../../models/order';
+import { Product, ProductStore } from '../../models/product';
+import { User, Users } from '../../models/user';
 
 const orderStore = new OrderStore();
 const userStore = new Users();
