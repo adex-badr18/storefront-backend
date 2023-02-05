@@ -1,10 +1,10 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { Product, ProductStore } from './models/product';
+import dotenv from 'dotenv';
 import product_routes from './handlers/product';
 import user_routes from './handlers/user';
-import dotenv from 'dotenv';
+import order_routes from './handlers/order';
 
 dotenv.config();
 
@@ -21,6 +21,7 @@ app.get('/', (req: Request, res: Response) => {
 
 product_routes(app);
 user_routes(app);
+order_routes(app);
 
 app.listen(3000, () => {
   console.log(`Running app on ${address}`);
