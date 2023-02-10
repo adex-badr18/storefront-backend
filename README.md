@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a REST API simulating an e-commerce backend based on three models: Products, Orders and Users. A detailed list of the endpoints and actions available can be found in the [REQUIREMENTS.md](https://github.com/AbeerAlmakhdhub/StorefrontBackendApi/blob/main/REQUIREMENTS.md) file.
+This is a REST API simulating an e-commerce backend based on three models: Products, Orders and Users. A detailed list of the endpoints and actions available can be found in the [REQUIREMENTS.md](https://github.com/adex-badr18/storefront-backend/blob/a64b4dcd070db6ca66e526d193fe66a9db18dd4a/REQUIREMENTS.md) file.
 
 ---
 
@@ -11,7 +11,18 @@ This is a REST API simulating an e-commerce backend based on three models: Produ
 ### Database config
 
 The API connects to a **postgres** database.
-Please create **two** separate databases, one for the development environment and the testing environment.
+Please create **two** separate databases, one for the development environment and the testing environment. In a terminal tab, create and run the database:
+
+- switch to the postgres user and start psql prompt: `sudo -u postgres psql`
+- in psql prompt, run the following:
+    - `CREATE USER shopping_user WITH PASSWORD 'password123';`
+    - `CREATE DATABASE shopping;`
+    - `CREATE DATABASE shopping_test;`
+    - `\c shopping`
+    - `GRANT ALL PRIVILEGES ON DATABASE shopping TO shopping_user;`
+    - `\c shopping_test`
+    - `GRANT ALL PRIVILEGES ON DATABASE shopping_test TO shopping_user;`
+
 
 To make sure the API can connect to the db it is necessary to create a `database.json` file with the format below:
 
@@ -97,12 +108,12 @@ Please create a **.env** file and declare the following variables in it:
 
 ## How to use
 
-The API provides both CRUD and custom actions for accessing and manipulating data in the database. You can find information regarding the requirements for sending requests to endpoints, data shapes, and database schema in the [REQUIREMENTS.md](https://github.com/AbeerAlmakhdhub/StorefrontBackendApi/blob/main/REQUIREMENTS.md) file.
+The API provides both CRUD and custom actions for accessing and manipulating data in the database. You can find information regarding the requirements for sending requests to endpoints, data shapes, and database schema in the [REQUIREMENTS.md](https://github.com/adex-badr18/storefront-backend/blob/a64b4dcd070db6ca66e526d193fe66a9db18dd4a/REQUIREMENTS.md) file.
 
 
 
 
-
+### ============================================================================================
 
 # Storefront Backend Project
 
