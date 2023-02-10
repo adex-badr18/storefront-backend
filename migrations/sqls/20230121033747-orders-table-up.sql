@@ -1,7 +1,5 @@
 DROP TABLE IF EXISTS orders;
 
-CREATE TYPE ORDERSTATUS AS ENUM ('active', 'complete');
-
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     product_id INTEGER REFERENCES products(id) NOT NULL,
