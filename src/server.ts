@@ -15,7 +15,7 @@ const corsOptions = { credential: true, origin: process.env.URL || '*' };
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/api', (req: Request, res: Response) => {
   res.send('API of a Storefront Backend');
 });
 
@@ -26,3 +26,6 @@ order_routes(app);
 app.listen(3000, () => {
   console.log(`Running app on ${address}`);
 });
+
+
+export default app;
