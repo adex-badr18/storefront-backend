@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import verifyAuthToken from '../middleware/verifyAuthToken';
 import { Order, OrderStore } from '../models/order';
 
@@ -9,7 +9,7 @@ const getAllOrders = async (_req: Request, res: Response) => {
     try {
         const allOrders = await orders.getAllOrders();
         if (!allOrders) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(allOrders);
     } catch (err) {
@@ -22,7 +22,7 @@ const getOrderById = async (req: Request, res: Response) => {
     try {
         const order = await orders.getOrderById(+req.params.id);
         if (order === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(order);
     } catch (err) {
@@ -34,7 +34,7 @@ const getOrdersByStatus = async (req: Request, res: Response) => {
     const ordersByStatus = await orders.getOrdersByStatus(req.params.status);
     try {
         if (ordersByStatus === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(ordersByStatus);
     } catch (err) {
@@ -53,7 +53,7 @@ const createOrder = async (req: Request, res: Response) => {
         };
 
         const newOrder = await orders.createOrder(order);
-        res.json(newOrder);
+        res.status(201).json(newOrder);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -63,44 +63,22 @@ const deleteOrder = async (req: Request, res: Response) => {
     const order_id = +req.params.id;
     try {
         const deleted = await orders.deleteOrder(order_id);
-        if (deleted === null) return res.json({ error: `Order with id ${order_id} does not exist` })
+        if (deleted === null) return res.status(404).json({ error: `Order with id ${order_id} does not exist` })
         res.json(deleted);
     } catch (err) {
-        res.status(400);
-        res.json(err);
+        res.status(400).json(err);
     }
 };
-
-// UPDATE ROUTE
-// const updateOrder = async (req: Request, res: Response) => {
-//     const order: Order = {
-//         id: req.body.id,
-//         product_id: req.body.product_id,
-//         quantity: req.body.quantity,
-//         user_id: req.body.user_id,
-//         status: req.body.status
-//     }
-
-//     const updated = await orders.updateOrder(order)
-//     res.json(updated)
-//     try {
-//         res.send('this is the EDIT route')
-//     } catch (err) {
-//         res.status(400)
-//         res.json(err)
-//     }
-// };
 
 const userActiveOrders = async (req: Request, res: Response) => {
     try {
         const activeOrders = await orders.userActiveOrders(+req.params.user_id);
         if (activeOrders === null) {
-            return res.json({ message: `No active orders for user with id: ${req.params.user_id}` });
+            return res.status(404).json({ message: `No active orders for user with id: ${req.params.user_id}` });
         }
         res.json(activeOrders);
     } catch (error) {
-        res.status(400);
-        return res.json(error);
+        res.status(400).json(error);
     }
 };
 
@@ -108,12 +86,11 @@ const userCompletedOrders = async (req: Request, res: Response) => {
     try {
         const completedOrders = await orders.userCompletedOrders(+req.params.user_id);
         if (completedOrders === null) {
-            return res.json({ message: `No completed orders for user with id ${req.params.user_id}` });
+            return res.status(404).json({ message: `No completed orders for user with id ${req.params.user_id}` });
         }
-        res.json(completedOrders);
+        res.status(200).json(completedOrders);
     } catch (error) {
-        res.status(400);
-        return res.json(error);
+        res.status(400).json(error);
     }
 };
 

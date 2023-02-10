@@ -1,7 +1,6 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { Product, ProductStore } from '../models/product';
 import verifyAuthToken from '../middleware/verifyAuthToken';
-import logger from '../middleware/verifyAuthToken'
 
 const store = new ProductStore();
 
@@ -10,7 +9,7 @@ const getAllProducts = async (_req: Request, res: Response) => {
     try {
         const products = await store.getAllProducts();
         if (!products) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(products);
     } catch (err) {
@@ -23,7 +22,7 @@ const getProductById = async (req: Request, res: Response) => {
     try {
         const product = await store.showProductById(+req.params.id);
         if (product === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(product);
     } catch (err) {
@@ -36,7 +35,7 @@ const getProductByCategory = async (req: Request, res: Response) => {
     try {
         const product = await store.showProductByCategory(req.params.category);
         if (product === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(product);
     } catch (err) {
@@ -53,7 +52,7 @@ const createProduct = async (req: Request, res: Response) => {
 
     try {
         const newProduct = await store.create(product);
-        res.json(newProduct);
+        res.status(201).json(newProduct);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -63,7 +62,7 @@ const deleteProduct = async (req: Request, res: Response) => {
     try {
         const deleted = await store.delete(+req.params.id);
         if (deleted === null) {
-            return res.json({ error: `No product with id ${req.params.id}` });
+            return res.status(404).json({ error: `No product with id ${req.params.id}` });
         }
         res.json(deleted);
     } catch (err) {
