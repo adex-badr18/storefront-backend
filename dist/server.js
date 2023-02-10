@@ -16,7 +16,7 @@ const address = '0.0.0.0:3000';
 const corsOptions = { credential: true, origin: process.env.URL || '*' };
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)(corsOptions));
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send('API of a Storefront Backend');
 });
 (0, product_1.default)(app);
@@ -25,3 +25,4 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
     console.log(`Running app on ${address}`);
 });
+exports.default = app;

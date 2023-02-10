@@ -65,9 +65,9 @@ class Users {
     }
     async authenticate(username, password) {
         try {
-            const connection = await database_1.default.connect();
+            const conn = await database_1.default.connect();
             const sql = 'SELECT * FROM users WHERE username=($1)';
-            const result = await connection.query(sql, [username]);
+            const result = await conn.query(sql, [username]);
             if (result.rows.length) {
                 const user = result.rows[0];
                 if (bcrypt_1.default.compareSync(password, user.password)) {

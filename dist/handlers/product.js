@@ -37,7 +37,7 @@ const getProductByCategory = async (req, res) => {
     try {
         const product = await store.showProductByCategory(req.params.category);
         if (product === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(product);
     }
@@ -53,7 +53,7 @@ const createProduct = async (req, res) => {
     };
     try {
         const newProduct = await store.create(product);
-        res.json(newProduct);
+        res.status(201).json(newProduct);
     }
     catch (err) {
         res.status(400).json(err);
@@ -63,7 +63,7 @@ const deleteProduct = async (req, res) => {
     try {
         const deleted = await store.delete(+req.params.id);
         if (deleted === null) {
-            return res.json({ error: `No product with id ${req.params.id}` });
+            return res.status(404).json({ error: `No product with id ${req.params.id}` });
         }
         res.json(deleted);
     }

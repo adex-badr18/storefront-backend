@@ -52,47 +52,33 @@ const createUser = async (req, res) => {
     }
 };
 const authenticate = async (req, res) => {
-    const { username, password } = req.body;
-    const user = await userStore.authenticate(username, password);
-    // console.log({ user: user });
-    if (user !== null) {
-        let token = (0, jwt_helpers_1.jwtTokens)(user);
-        return res.status(200).json(token);
+    try {
+        const { username, password } = req.body;
+        const user = await userStore.authenticate(username, password);
+        // console.log({ user: user });
+        if (user !== null) {
+            let token = (0, jwt_helpers_1.jwtTokens)(user);
+            return res.status(200).json(token);
+        }
+        else {
+            return res.json('Invalid login details');
+        }
     }
-    else {
-        return res.json('Invalid Credentials');
+    catch (error) {
+        res.json(`An error occurred: ${error}`);
     }
 };
 const deleteUser = async (req, res) => {
     try {
         const deleted = await userStore.deleteUser(req.params.username);
         if (deleted === null)
-            return res.json({ error: `Unable to delete user "${req.params.username}"` });
+            return res.status(404).json({ error: `"${req.params.username}" not found.` });
         res.json(deleted);
     }
     catch (err) {
-        res.status(400);
-        res.json(err);
+        res.status(400).json(err);
     }
 };
-// UPDATE ROUTE
-// const updateUser = async (req: Request, res: Response) => {
-//     const user: User = {
-//         firstName: req.body.firstName,
-//         lastName: req.body.lastName,
-//         username: req.body.username
-//     };
-//     const user_id = +req.params.user_id;
-//     try {
-//         const updated = await userStore.updateUser(user, user_id);
-//         if (updated === null) {
-//             return res.json({ error: `Could not update user with id ${user_id}` })
-//         }
-//         res.json(updated);
-//     } catch (err) {
-//         res.status(400).json(err)
-//     }
-// }
 // ------End of handler functions
 // ------Express routes start
 const user_routes = (app) => {
@@ -100,7 +86,6 @@ const user_routes = (app) => {
     app.get('/user/:username', verifyAuthToken_1.default, getUserByUsername);
     app.post('/user/signup', createUser);
     app.delete('/user/delete/:username', verifyAuthToken_1.default, deleteUser);
-    // app.put('/user/update', verifyAuthToken, updateUser);
     app.post('/user/login', authenticate);
 };
 // ------Express routes end
