@@ -56,7 +56,9 @@ export class ProductStore {
 
       return products;
     } catch (err) {
-      throw new Error(`Could not find items with category ${category}. Error: ${err}`);
+      throw new Error(
+        `Could not find items with category ${category}. Error: ${err}`
+      );
     }
   }
 

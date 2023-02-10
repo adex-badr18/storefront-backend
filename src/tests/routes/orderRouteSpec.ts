@@ -1,12 +1,12 @@
-import supertest from "supertest"
-import app from '../../server'
-import dotenv from 'dotenv'
+import supertest from 'supertest';
+import app from '../../server';
+import dotenv from 'dotenv';
 import { Product } from '../../models/product';
 import { User } from '../../models/user';
-import { Order, OrderStore } from "../../models/order";
+import { Order, OrderStore } from '../../models/order';
 import client from '../../database';
 
-dotenv.config()
+dotenv.config();
 
 const request = supertest(app);
 const orderStore = new OrderStore();
@@ -14,23 +14,23 @@ let token: string;
 
 fdescribe('Order Handlers Test Suite', () => {
   const product: Product = {
-    name: "Product1",
+    name: 'Product1',
     price: 22000,
-    category: "Product-Category"
+    category: 'Product-Category'
   };
 
   const user: User = {
     firstName: 'firstName',
     lastName: 'lastName',
     username: 'user1',
-    password: 'password',
+    password: 'password'
   };
 
   const order: Order = {
     product_id: 1,
     quantity: 3,
     user_id: 1,
-    status: "active"
+    status: 'active'
   };
 
   beforeAll(async () => {
@@ -47,14 +47,18 @@ fdescribe('Order Handlers Test Suite', () => {
     await request.post('/user/signup').send(user);
 
     // Authenticate the new user
-    await request.post('/user/login')
+    await request
+      .post('/user/login')
       .send({ username: user.username, password: user.password })
       .then((res) => {
         token = res.body.accessToken;
       });
 
     // Create a new product
-    await request.post('/product/create').send(product).set('Authorization', `Bearer ${token}`);
+    await request
+      .post('/product/create')
+      .send(product)
+      .set('Authorization', `Bearer ${token}`);
   });
 
   beforeEach(function () {
@@ -63,8 +67,10 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/order/create endpoint should return status of 201', async () => {
-
-    const res = await request.post('/order/create').send(order).set('Authorization', `Bearer ${token}`);
+    const res = await request
+      .post('/order/create')
+      .send(order)
+      .set('Authorization', `Bearer ${token}`);
     const newOrder: Order = res.body;
     console.log(res.body);
     expect(res.status).toBe(201);
@@ -72,7 +78,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/order/1 endpoint returns a status of 200', (done) => {
-    const res = request.get('/order/1')
+    const res = request
+      .get('/order/1')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -81,7 +88,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/orders endpoint returns a list of order(s)', (done) => {
-    const res = request.get('/orders')
+    const res = request
+      .get('/orders')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -91,7 +99,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/orders/complete endpoint returns a status of 404', (done) => {
-    const res = request.get('/orders/complete')
+    const res = request
+      .get('/orders/complete')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(404);
@@ -100,7 +109,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/order/delete/3 endpoint returns a status of 200', (done) => {
-    const res = request.delete('/order/delete/3')
+    const res = request
+      .delete('/order/delete/3')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(404);
@@ -109,7 +119,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/orders/active/1 endpoint returns a status of 200', (done) => {
-    const res = request.get('/orders/active/1')
+    const res = request
+      .get('/orders/active/1')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -118,7 +129,8 @@ fdescribe('Order Handlers Test Suite', () => {
   });
 
   it('/orders/completed/1 endpoint returns a status of 404', (done) => {
-    const res = request.get('/orders/completed/1')
+    const res = request
+      .get('/orders/completed/1')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(404);

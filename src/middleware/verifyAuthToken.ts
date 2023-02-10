@@ -1,39 +1,43 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import express, { Request, Response, NextFunction } from 'express';
-import { User } from "../models/user";
+import { User } from '../models/user';
 import dotenv from 'dotenv';
 
 dotenv.config();
-declare var process: {
-    "env": {
-        "ACCESS_TOKEN_SECRET": string
-    }
-}
+declare let process: {
+  env: {
+    ACCESS_TOKEN_SECRET: string;
+  };
+};
 
-const verifyAuthToken = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const authHeader = req.headers['authorization']!;
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.decode(token, { complete: true });
-        if (!token) {
-            return res.status(401).json({ error: "Null token." });
-        }
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
-            if (error) {
-                // console.log(error);
-                return res.status(403).json({ error: error.message });
-            };
-            req.body.user = user;
-            next();
-        })
-    } catch (error) {
-        // console.log(error);
-        return res.status(401).json(`Access denied, invalid token: ${error}`);
+const verifyAuthToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers['authorization']!;
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.decode(token, { complete: true });
+    if (!token) {
+      return res.status(401).json({ error: 'Null token.' });
     }
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+      if (error) {
+        // console.log(error);
+        return res.status(403).json({ error: error.message });
+      }
+      req.body.user = user;
+      next();
+    });
+  } catch (error) {
+    // console.log(error);
+    return res.status(401).json(`Access denied, invalid token: ${error}`);
+  }
 };
 
 const logger = () => {
-    console.log('Endpoint reached');
+  console.log('Endpoint reached');
 };
 
 export default verifyAuthToken;

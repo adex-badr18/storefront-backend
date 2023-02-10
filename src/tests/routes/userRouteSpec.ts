@@ -1,10 +1,10 @@
-import supertest from "supertest"
-import app from '../../server'
-import dotenv from 'dotenv'
+import supertest from 'supertest';
+import app from '../../server';
+import dotenv from 'dotenv';
 import { User } from '../../models/user';
 import client from '../../database';
 
-dotenv.config()
+dotenv.config();
 
 const request = supertest(app);
 let token: string, user_id: number;
@@ -13,7 +13,7 @@ describe('User Handlers', () => {
     firstName: 'firstName',
     lastName: 'lastName',
     username: 'user1',
-    password: 'password',
+    password: 'password'
   };
   beforeAll(async () => {
     try {
@@ -41,7 +41,8 @@ describe('User Handlers', () => {
   });
 
   it('/user/login endpoint returns a status of 200', (done) => {
-    const res = request.post('/user/login')
+    const res = request
+      .post('/user/login')
       .send({ username: user.username, password: user.password })
       .then((res) => {
         token = res.body.accessToken;
@@ -52,7 +53,8 @@ describe('User Handlers', () => {
   });
 
   it('/users endpoint returns a list of user(s)', (done) => {
-    const res = request.get('/users')
+    const res = request
+      .get('/users')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -62,7 +64,8 @@ describe('User Handlers', () => {
   });
 
   it('/user/user1 endpoint returns a status of 200', (done) => {
-    const res = request.get('/user/user1')
+    const res = request
+      .get('/user/user1')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(200);
@@ -71,7 +74,8 @@ describe('User Handlers', () => {
   });
 
   it('/user/delete/user2 endpoint returns a status of 200', (done) => {
-    const res = request.delete('/user/delete/user2')
+    const res = request
+      .delete('/user/delete/user2')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {
         expect(res.status).toBe(404);

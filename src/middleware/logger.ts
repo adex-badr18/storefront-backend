@@ -1,3 +1,3 @@
 const logger = () => {
-    console.log('Endpoint reached');
-}
+  console.log('Endpoint reached');
+};

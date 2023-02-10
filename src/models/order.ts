@@ -35,7 +35,8 @@ export class OrderStore {
     // a method that returns a list of all items in the database.
     try {
       const conn = await client.connect(); // connect to the database
-      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id'; // write the sql query
+      const sql =
+        'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id'; // write the sql query
       const result = await conn.query(sql); // run the sql query on the database
       conn.release(); // close database connection
       return result.rows; // return the rows contained in the database query result
@@ -46,7 +47,8 @@ export class OrderStore {
 
   async getOrderById(id: number): Promise<Order | null> {
     try {
-      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.user_id=($1)';
+      const sql =
+        'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.user_id=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
@@ -64,13 +66,14 @@ export class OrderStore {
 
   async getOrdersByStatus(status: string): Promise<Order[] | null> {
     try {
-      const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status=($1)';
+      const sql =
+        'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
       const result = await conn.query(sql, [status]);
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       const orders = result.rows;
       conn.release();
@@ -89,7 +92,7 @@ export class OrderStore {
 
       const result = await conn.query(sql, [id]);
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       const order = result.rows[0];
 
@@ -109,7 +112,7 @@ export class OrderStore {
       const result = await connection.query(sql, [user_id]);
       connection.release();
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       return result.rows;
     } catch (error) {
@@ -125,7 +128,7 @@ export class OrderStore {
 
       connection.release();
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       return result.rows;
     } catch (error) {

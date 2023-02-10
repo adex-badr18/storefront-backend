@@ -87,7 +87,6 @@ export class Users {
     } catch (error) {
       throw new Error(`Authentication failed for user (${username}): ${error}`);
     }
-
   }
 
   async deleteUser(username: string): Promise<User | null> {
@@ -98,7 +97,7 @@ export class Users {
 
       const result = await conn.query(sql, [username]);
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       const user = result.rows[0];
 
