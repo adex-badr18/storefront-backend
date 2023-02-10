@@ -11,7 +11,7 @@ const getAllOrders = async (_req, res) => {
     try {
         const allOrders = await orders.getAllOrders();
         if (!allOrders) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(allOrders);
     }
@@ -24,7 +24,7 @@ const getOrderById = async (req, res) => {
     try {
         const order = await orders.getOrderById(+req.params.id);
         if (order === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(order);
     }

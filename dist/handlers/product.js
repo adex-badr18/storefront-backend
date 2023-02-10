@@ -11,7 +11,7 @@ const getAllProducts = async (_req, res) => {
     try {
         const products = await store.getAllProducts();
         if (!products) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(products);
     }
@@ -24,7 +24,7 @@ const getProductById = async (req, res) => {
     try {
         const product = await store.showProductById(+req.params.id);
         if (product === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(product);
     }

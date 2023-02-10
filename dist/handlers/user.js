@@ -12,7 +12,7 @@ const getAllUsers = async (_req, res) => {
     try {
         const allUsers = await userStore.getAllUsers();
         if (allUsers === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(allUsers);
     }
@@ -26,7 +26,7 @@ const getUserByUsername = async (req, res) => {
     const user = await userStore.getUserByUsername(req.params.username);
     try {
         if (user === null) {
-            return res.send('Found zero record.');
+            return res.status(404).send('Found zero record.');
         }
         res.json(user);
     }
@@ -61,7 +61,7 @@ const authenticate = async (req, res) => {
             return res.status(200).json(token);
         }
         else {
-            return res.json('Invalid login details');
+            return res.status(404).json('Invalid login details');
         }
     }
     catch (error) {

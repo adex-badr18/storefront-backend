@@ -1,3 +1,109 @@
+# STOREFRONT BACKEND API
+
+## Introduction
+
+This is a REST API simulating an e-commerce backend based on three models: Products, Orders and Users. A detailed list of the endpoints and actions available can be found in the [REQUIREMENTS.md](https://github.com/AbeerAlmakhdhub/StorefrontBackendApi/blob/main/REQUIREMENTS.md) file.
+
+---
+
+## APPLICATION SETUP PROCEDURE
+
+### Database config
+
+The API connects to a **postgres** database.
+Please create **two** separate databases, one for the development environment and the testing environment.
+
+To make sure the API can connect to the db it is necessary to create a `database.json` file with the format below:
+
+```json
+{
+    "dev": {
+        "driver": "pg",
+        "host": {
+            "ENV": "PG_HOST"
+        },
+        "database": {
+            "ENV": "PG_DB"
+        },
+        "user": {
+            "ENV": "PG_USER"
+        },
+        "password": {
+            "ENV": "PG_PASSWORD"
+        }
+    },
+    "test": {
+        "driver": "pg",
+        "host": {
+            "ENV": "PG_HOST"
+        },
+        "database": {
+            "ENV": "PG_TEST_DB"
+        },
+        "user": {
+            "ENV": "PG_USER"
+        },
+        "password": {
+            "ENV": "PG_PASSWORD"
+        }
+    }
+}
+```
+
+### Environment variables
+
+The API relies on several environment variables to function.
+**dotenv** is included in the **package.json** file.
+Please create a **.env** file and declare the following variables in it:
+
+| Name              |      Value       |                                                                       Notes                                                                       |
+| ----------------- | :--------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------: |
+| PG_HOST     |    127.0.0.1     |                                                      Same value as in the database.json file                                                      |
+| PG_DB       |    shopping    |                                                      Same value as in the database.json file                                                      |
+| PG_TEST_DB  | shopping_test  |                                                      Same value as in the database.json file                                                      |
+| PG_USER     | shop_user  |                                                      Same value as in the database.json file                                                      |
+| PG_PASSWORD |  YOUR_PASSWORD   |                                                      Same value as in the database.json file                                                      |
+| ENV               |       dev        |                           Used to set the DB environment. The test script automatically sets it to 'test' when running.                           |
+| PORT              |    YOUR_PORT     |         The API will run on http://localhost.3000 by default, but there is the option to select a custom port as an environment variable          |
+| SALT_ROUNDS       |        10        |                              Number of salt rounds the password hashing function of the bcrypt package will be using                              |
+| BCRYPT_PASSWORD            | YOUR_STRING_HERE |                   A string of your choice that bcrypt will be adding prior to hashing passwords for an extra layer of security                    |
+| ACCESS_TOKEN_SECRET      | YOUR_STRING_HERE | A string that will be used by jwt to generate authentication tokens. The more complex the better, it should be made of random characters ideally. |
+
+---
+
+### Prepare application
+
+- `npm install` to install all dependencies
+- `db-migrate up` to set up the database and get access via http://127.0.0.1:5432
+- `npm run build` to build the app
+
+### Start the app
+
+- `npm run dev` to start the app and get access via http://127.0.0.1:3000 | http://localhost/:3000
+
+> ### Scripts
+>
+> **npm run Script_key**
+>
+> | Script_keys         |                                                                                                 Description                                                                                                  |
+> | -------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+> | prettier            |                                                                                              Prettify the code                                                                                             |
+> | lint                |                                                                                                Parse the code                                                                                                |
+> | jasmine-test        |                                                                                         Run unit tests using Jasmine                                                                                      |
+> | build               |                                                                                                Build the app                                                                                                 |
+> | dev               |                                                                                                Start the app                                                                                                 |
+> | test                |                                      Execute DB migrations in testing environment, run tests using Jasmine, and finally drop all alterations in testing environment DB.                                    |
+> | migrate             |                                                                                 execute DB migrations in testing environment                                                                             |
+
+## How to use
+
+The API provides both CRUD and custom actions for accessing and manipulating data in the database. You can find information regarding the requirements for sending requests to endpoints, data shapes, and database schema in the [REQUIREMENTS.md](https://github.com/AbeerAlmakhdhub/StorefrontBackendApi/blob/main/REQUIREMENTS.md) file.
+
+
+
+
+
+
 # Storefront Backend Project
 
 ## Getting Started
