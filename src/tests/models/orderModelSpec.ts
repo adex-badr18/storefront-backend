@@ -11,8 +11,8 @@ describe('Order model test suite', () => {
   beforeAll(async () => {
     // delete existing records from all tables
     const conn = await client.connect();
-    const query =
-      'DELETE FROM orders; DELETE FROM products; DELETE FROM users; ALTER SEQUENCE orders_id_seq RESTART WITH 1; ALTER SEQUENCE products_id_seq RESTART WITH 1; ALTER SEQUENCE users_id_seq RESTART WITH 1;';
+    const query = 'TRUNCATE products, orders, users RESTART IDENTITY;'
+    // 'DELETE FROM orders; DELETE FROM products; DELETE FROM users; ALTER SEQUENCE orders_id_seq RESTART WITH 1; ALTER SEQUENCE products_id_seq RESTART WITH 1; ALTER SEQUENCE users_id_seq RESTART WITH 1;';
     await conn.query(query);
 
     // create new user, new product and new order
@@ -41,6 +41,22 @@ describe('Order model test suite', () => {
     const newOrder = await orderStore.createOrder(order);
   });
 
+  // beforeEach(function () {
+  //   const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+  //   jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
+  // });
+
+  afterAll(async () => {
+    try {
+      const conn = await client.connect();
+      const query = 'TRUNCATE products, orders, users RESTART IDENTITY';
+      const result = await conn.query(query);
+      conn.release();
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  });
+
   it('getAllOrders() should not be empty', async () => {
     const orders = await orderStore.getAllOrders();
     expect(orders).not.toBeNull();
@@ -65,7 +81,7 @@ describe('Order model test suite', () => {
     };
 
     const newOrder = await orderStore.createOrder(order);
-    expect(newOrder.user_id).toEqual(1);
+    expect(newOrder!.user_id).toEqual(1);
   });
 
   it('getUserActiveOrders() with wrong user info should return null', async () => {

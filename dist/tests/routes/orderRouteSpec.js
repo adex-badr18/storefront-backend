@@ -5,110 +5,99 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const order_1 = require("../../models/order");
 const database_1 = __importDefault(require("../../database"));
-dotenv_1.default.config();
 const request = (0, supertest_1.default)(server_1.default);
-const orderStore = new order_1.OrderStore();
 let token;
-fdescribe('Order Handlers Test Suite', () => {
-    const product = {
-        name: "Product1",
-        price: 22000,
-        category: "Product-Category"
-    };
-    const user = {
-        firstName: 'firstName',
-        lastName: 'lastName',
-        username: 'user1',
-        password: 'password',
-    };
-    const order = {
-        product_id: 1,
-        quantity: 3,
-        user_id: 1,
-        status: "active"
-    };
+describe('Order Handlers Test Suite', () => {
     beforeAll(async () => {
         try {
             const conn = await database_1.default.connect();
-            const query = 'TRUNCATE products, orders, users RESTART IDENTITY';
+            const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
+            await conn.query(query);
+            conn.release();
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    });
+    afterAll(async () => {
+        try {
+            const conn = await database_1.default.connect();
+            const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
             const result = await conn.query(query);
             conn.release();
         }
         catch (error) {
             throw new Error(`${error}`);
         }
-        // Create a new user
-        await request.post('/user/signup').send(user);
-        // Authenticate the new user
-        await request.post('/user/login')
-            .send({ username: user.username, password: user.password })
-            .then((res) => {
-            token = res.body.accessToken;
-        });
-        // Create a new product
-        await request.post('/product/create').send(product).set('Authorization', `Bearer ${token}`);
     });
-    beforeEach(function () {
-        const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    it('Create a user and product and authenticate the user', async () => {
+        const user = {
+            firstName: 'firstname',
+            lastName: 'lastname',
+            username: 'user1',
+            password: 'password1'
+        };
+        const product = {
+            name: 'Product1',
+            price: 22000,
+            category: 'Category'
+        };
+        // create a user
+        const newUser = await request.post('/user/signup').send(user);
+        console.log(newUser.body.user.username);
+        // authenticate the new user to generate a token
+        const res = await request.post('/user/login').send({ username: user.username, password: user.password });
+        token = res.body.accessToken;
+        // create a new product
+        const newProduct = await request.post('/product/create').send(product).set('Authorization', `Bearer ${token}`);
+        console.log(newProduct.body);
+        expect(token).toBeTruthy();
+        expect(res.status).toBe(200);
     });
     it('/order/create endpoint should return status of 201', async () => {
-        const res = await request.post('/order/create').send(order).set('Authorization', `Bearer ${token}`);
-        const newOrder = res.body;
-        console.log(res.body);
+        const order = {
+            product_id: 1,
+            quantity: 3,
+            user_id: 1,
+            status: 'active'
+        };
+        const res = await request.post('/order/create').send(order)
+            .set('Authorization', `Bearer ${token}`)
+            .set('Content-Type', 'application/json');
         expect(res.status).toBe(201);
-        expect(newOrder.product_id).toEqual(1);
+        expect(res.body.product_id).toEqual(1);
     });
-    it('/order/1 endpoint returns a status of 200', (done) => {
-        const res = request.get('/order/1')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(200);
-            done();
-        });
+    it('/order/1 endpoint returns a status of 200', async () => {
+        const res = await request.get('/order/1')
+            .set('Authorization', `Bearer ${token}`);
+        expect(res.status).toBe(200);
     });
-    it('/orders endpoint returns a list of order(s)', (done) => {
-        const res = request.get('/orders')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(200);
-            expect(res.body[0].user_id).toEqual(1);
-            done();
-        });
+    it('/orders endpoint returns a list of order(s)', async () => {
+        const res = await request.get('/orders')
+            .set('Authorization', `Bearer ${token}`);
+        expect(res.status).toBe(200);
+        expect(res.body[0].user_id).toEqual(1);
     });
-    it('/orders/complete endpoint returns a status of 404', (done) => {
-        const res = request.get('/orders/complete')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(404);
-            done();
-        });
+    it('/orders/complete endpoint returns a status of 404', async () => {
+        const res = await request.get('/orders/complete')
+            .set('Authorization', `Bearer ${token}`);
+        expect(res.status).toBe(404);
     });
-    it('/order/delete/3 endpoint returns a status of 200', (done) => {
-        const res = request.delete('/order/delete/3')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(404);
-            done();
-        });
+    it('/orders/completed/1 endpoint returns a status of 404', async () => {
+        const res = await request.get('/orders/completed/1')
+            .set('Authorization', `Bearer ${token}`);
+        expect(res.status).toBe(404);
     });
-    it('/orders/active/1 endpoint returns a status of 200', (done) => {
-        const res = request.get('/orders/active/1')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(200);
-            done();
-        });
+    it('/orders/active/1 endpoint returns a status of 200', async () => {
+        const res = await request.get('/orders/active/1')
+            .set('Authorization', `Bearer ${token}`);
+        expect(res.status).toBe(200);
     });
-    it('/orders/completed/1 endpoint returns a status of 404', (done) => {
-        const res = request.get('/orders/completed/1')
-            .set('Authorization', `Bearer ${token}`)
-            .then((res) => {
-            expect(res.status).toBe(404);
-            done();
-        });
+    it('/order/delete/3 endpoint returns a status of 200', async () => {
+        const res = await request.delete('/order/delete/3')
+            .set('Authorization', `Bearer ${token}`);
+        // console.log('Token:', token);
+        expect(res.status).toBe(404);
     });
 });

@@ -1,45 +1,52 @@
 import supertest from 'supertest';
 import app from '../../server';
-import dotenv from 'dotenv';
-import { token } from './userRouteSpec';
 import { Product } from '../../models/product';
+import { User } from '../../models/user';
 import client from '../../database';
 
-dotenv.config();
-
 const request = supertest(app);
+let token: string;
 
-describe('Product Handlers Test Suite', () => {
-  const product: Product = {
-    name: 'Product1',
-    price: 22000,
-    category: 'Product-Category'
-  };
+describe('Product Handler Test Suite', () => {
   beforeAll(async () => {
     try {
       const conn = await client.connect();
-      const query = 'TRUNCATE products, orders, users RESTART IDENTITY';
-      const result = await conn.query(query);
+      const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
+      await conn.query(query);
       conn.release();
-      //
     } catch (error) {
       throw new Error(`${error}`);
     }
   });
 
-  beforeEach(function () {
-    const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  it('Create and authenticate a user', async () => {
+    const user: User = {
+      firstName: 'firstname',
+      lastName: 'lastname',
+      username: 'user1',
+      password: 'password1'
+    };
+
+    await request.post('/user/signup').send(user);
+    const res = await request.post('/user/login').send({ username: user.username, password: user.password });
+    token = res.body.accessToken;
+    expect(token).toBeDefined();
   });
 
   it('/product/create endpoint should return status of 201', async () => {
-    const res = await request
-      .post('/product/create')
+    const product: Product = {
+      name: 'Product1',
+      price: 22000,
+      category: 'Product-Category'
+    };
+
+    const res = await request.post('/product/create')
       .send(product)
       .set('Authorization', `Bearer ${token}`);
     const newProduct: Product = res.body;
     expect(res.status).toBe(201);
-    expect(res.body.name).toEqual('Product1');
+    expect(token).toBeTruthy();
+    expect(newProduct.name).toEqual('Product1');
   });
 
   it('/products/ProductCategory endpoint returns a status of 404', (done) => {

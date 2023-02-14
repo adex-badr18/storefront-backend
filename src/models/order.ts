@@ -9,7 +9,7 @@ export type Order = {
 };
 
 export class OrderStore {
-  async createOrder(o: Order): Promise<Order> {
+  async createOrder(o: Order): Promise<Order | null> {
     try {
       const sql =
         'INSERT INTO orders (product_id, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *';
@@ -22,6 +22,8 @@ export class OrderStore {
         o.user_id,
         o.status
       ]);
+
+      if (result.rows.length === 0) return null
 
       const order = result.rows[0];
       conn.release();
@@ -106,11 +108,11 @@ export class OrderStore {
 
   async userActiveOrders(user_id: number): Promise<Order[] | null> {
     try {
-      const connection = await client.connect();
+      const conn = await client.connect();
       const sql =
         "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='active' AND o.user_id=($1) ORDER BY amount DESC";
-      const result = await connection.query(sql, [user_id]);
-      connection.release();
+      const result = await conn.query(sql, [user_id]);
+      conn.release();
 
       if (result.rows.length === 0) return null;
 
@@ -121,12 +123,12 @@ export class OrderStore {
   }
   async userCompletedOrders(user_id: number): Promise<Order[] | null> {
     try {
-      const connection = await client.connect();
+      const conn = await client.connect();
       const sql =
         "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='complete' AND o.user_id=($1) ORDER BY amount DESC";
-      const result = await connection.query(sql, [user_id]);
+      const result = await conn.query(sql, [user_id]);
 
-      connection.release();
+      conn.release();
 
       if (result.rows.length === 0) return null;
 

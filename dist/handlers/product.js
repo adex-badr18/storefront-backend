@@ -63,7 +63,9 @@ const deleteProduct = async (req, res) => {
     try {
         const deleted = await store.delete(+req.params.id);
         if (deleted === null) {
-            return res.status(404).json({ error: `No product with id ${req.params.id}` });
+            return res
+                .status(404)
+                .json({ error: `No product with id ${req.params.id}` });
         }
         res.json(deleted);
     }

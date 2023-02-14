@@ -41,8 +41,7 @@ const getOrdersByStatus = async (req, res) => {
         res.json(ordersByStatus);
     }
     catch (err) {
-        res.status(400);
-        res.json(err);
+        res.status(400).json(err);
     }
 };
 const createOrder = async (req, res) => {
@@ -54,6 +53,8 @@ const createOrder = async (req, res) => {
             status: req.body.status
         };
         const newOrder = await orders.createOrder(order);
+        if (newOrder === null)
+            return res.status(400).json('Something went wrong');
         res.status(201).json(newOrder);
     }
     catch (err) {
@@ -65,7 +66,9 @@ const deleteOrder = async (req, res) => {
     try {
         const deleted = await orders.deleteOrder(order_id);
         if (deleted === null)
-            return res.status(404).json({ error: `Order with id ${order_id} does not exist` });
+            return res
+                .status(404)
+                .json({ error: `Order with id ${order_id} does not exist` });
         res.json(deleted);
     }
     catch (err) {
@@ -76,7 +79,9 @@ const userActiveOrders = async (req, res) => {
     try {
         const activeOrders = await orders.userActiveOrders(+req.params.user_id);
         if (activeOrders === null) {
-            return res.status(404).json({ message: `No active orders for user with id: ${req.params.user_id}` });
+            return res.status(404).json({
+                message: `No active orders for user with id: ${req.params.user_id}`
+            });
         }
         res.json(activeOrders);
     }
@@ -88,7 +93,9 @@ const userCompletedOrders = async (req, res) => {
     try {
         const completedOrders = await orders.userCompletedOrders(+req.params.user_id);
         if (completedOrders === null) {
-            return res.status(404).json({ message: `No completed orders for user with id ${req.params.user_id}` });
+            return res.status(404).json({
+                message: `No completed orders for user with id ${req.params.user_id}`
+            });
         }
         res.status(200).json(completedOrders);
     }

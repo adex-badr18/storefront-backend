@@ -9,10 +9,10 @@ const store = new user_1.Users();
 describe('User model test suite', () => {
     beforeAll(async () => {
         const user = {
-            "firstName": "User1firstname",
-            "lastName": "User1lastname",
-            "username": "user1",
-            "password": "user123"
+            firstName: 'User1firstname',
+            lastName: 'User1lastname',
+            username: 'user1',
+            password: 'user123'
         };
         const newUser = await store.createUser(user);
     });
@@ -33,10 +33,10 @@ describe('User model test suite', () => {
     });
     it('createUser() should return an object', async () => {
         const user = {
-            "firstName": "User2firstname",
-            "lastName": "User2lastname",
-            "username": "user2",
-            "password": "user213"
+            firstName: 'User2firstname',
+            lastName: 'User2lastname',
+            username: 'user2',
+            password: 'user213'
         };
         const newUser = await store.createUser(user);
         const conn = await database_1.default.connect();
@@ -46,7 +46,7 @@ describe('User model test suite', () => {
         expect(result.rows[0]).toBeTruthy();
     });
     it('authenticate() with wrong user info should return null', async () => {
-        const user = await store.authenticate("Hyundai", "Lexus");
+        const user = await store.authenticate('Hyundai', 'Lexus');
         expect(user).toBeNull();
     });
     it('delete() should return an object with username of user2', async () => {

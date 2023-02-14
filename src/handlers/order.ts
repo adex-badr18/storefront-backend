@@ -38,8 +38,7 @@ const getOrdersByStatus = async (req: Request, res: Response) => {
     }
     res.json(ordersByStatus);
   } catch (err) {
-    res.status(400);
-    res.json(err);
+    res.status(400).json(err);
   }
 };
 
@@ -53,6 +52,9 @@ const createOrder = async (req: Request, res: Response) => {
     };
 
     const newOrder = await orders.createOrder(order);
+
+    if (newOrder === null) return res.status(400).json('Something went wrong')
+
     res.status(201).json(newOrder);
   } catch (err) {
     res.status(400).json(err);

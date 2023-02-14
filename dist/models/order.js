@@ -17,6 +17,8 @@ class OrderStore {
                 o.user_id,
                 o.status
             ]);
+            if (result.rows.length === 0)
+                return null;
             const order = result.rows[0];
             conn.release();
             return order;
@@ -87,10 +89,10 @@ class OrderStore {
     }
     async userActiveOrders(user_id) {
         try {
-            const connection = await database_1.default.connect();
+            const conn = await database_1.default.connect();
             const sql = "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='active' AND o.user_id=($1) ORDER BY amount DESC";
-            const result = await connection.query(sql, [user_id]);
-            connection.release();
+            const result = await conn.query(sql, [user_id]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             return result.rows;
@@ -101,10 +103,10 @@ class OrderStore {
     }
     async userCompletedOrders(user_id) {
         try {
-            const connection = await database_1.default.connect();
+            const conn = await database_1.default.connect();
             const sql = "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='complete' AND o.user_id=($1) ORDER BY amount DESC";
-            const result = await connection.query(sql, [user_id]);
-            connection.release();
+            const result = await conn.query(sql, [user_id]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             return result.rows;

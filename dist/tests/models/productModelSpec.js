@@ -8,18 +8,18 @@ const database_1 = __importDefault(require("../../database"));
 const store = new product_1.ProductStore();
 const categoriesArray = [
     {
-        "id": 10,
-        "name": "Hyundai Elantra",
-        "price": 220.00,
-        "category": "Hyundai"
+        id: 10,
+        name: 'Hyundai Elantra',
+        price: 220.0,
+        category: 'Hyundai'
     }
 ];
 describe('Product model test suite', () => {
     beforeAll(async () => {
         const product = {
-            name: "Hyundai Elantra",
+            name: 'Hyundai Elantra',
             price: 220,
-            category: "Hyundai"
+            category: 'Hyundai'
         };
         const newProduct = await store.create(product);
     });
@@ -38,14 +38,14 @@ describe('Product model test suite', () => {
         expect(product).toBeNull();
     });
     it('showProductByCategory() should be equal to categoriesArray', async () => {
-        const categories = await store.showProductByCategory("Hyundai");
+        const categories = await store.showProductByCategory('Hyundai');
         expect(categories.length).toBeGreaterThan(0);
     });
     it('create() should return an object with price "55555"', async () => {
         const product = {
-            name: "Lexus G7",
+            name: 'Lexus G7',
             price: 55555,
-            category: "Lexus"
+            category: 'Lexus'
         };
         const newProduct = await store.create(product);
         const conn = await database_1.default.connect();

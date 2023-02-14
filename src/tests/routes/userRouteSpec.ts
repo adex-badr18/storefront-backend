@@ -1,35 +1,30 @@
 import supertest from 'supertest';
 import app from '../../server';
-import dotenv from 'dotenv';
 import { User } from '../../models/user';
 import client from '../../database';
 
-dotenv.config();
-
 const request = supertest(app);
-let token: string, user_id: number;
-describe('User Handlers', () => {
+let token: string;
+let user_id: number;
+
+describe('User Handler Test Suite', () => {
   const user: User = {
-    firstName: 'firstName',
-    lastName: 'lastName',
+    firstName: 'firstname',
+    lastName: 'lastname',
     username: 'user1',
-    password: 'password'
+    password: 'password1'
   };
+
   beforeAll(async () => {
     try {
       const conn = await client.connect();
-      const query = 'TRUNCATE products, orders, users RESTART IDENTITY';
-      const result = await conn.query(query);
+      const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
+      await conn.query(query);
       conn.release();
-      //
     } catch (error) {
-      throw new Error();
+      throw new Error(`${error}`);
     }
-  });
 
-  beforeEach(function () {
-    const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
   });
 
   it('/user/signup endpoint should return status of 200', async () => {
@@ -40,47 +35,26 @@ describe('User Handlers', () => {
     expect(newUser.id).toEqual(1);
   });
 
-  it('/user/login endpoint returns a status of 200', (done) => {
-    const res = request
-      .post('/user/login')
-      .send({ username: user.username, password: user.password })
-      .then((res) => {
-        token = res.body.accessToken;
-        expect(res.status).toBe(200);
-        expect(token).toBeTruthy();
-        done();
-      });
+  it('/user/login endpoint returns a status of 200', async () => {
+    const res = await request.post('/user/login').send({ username: user.username, password: user.password })
+    token = res.body.accessToken;
+    expect(res.status).toBe(200);
+    expect(token).toBeTruthy();
   });
 
-  it('/users endpoint returns a list of user(s)', (done) => {
-    const res = request
-      .get('/users')
-      .set('Authorization', `Bearer ${token}`)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.body).toBeTruthy();
-        done();
-      });
+  it('/users endpoint returns a status of 200', async () => {
+    const res = await request.get('/users').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body[0].username).toEqual(user.username);
   });
 
-  it('/user/user1 endpoint returns a status of 200', (done) => {
-    const res = request
-      .get('/user/user1')
-      .set('Authorization', `Bearer ${token}`)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        done();
-      });
+  it('/user/user1 endpoint returns a status of 200', async () => {
+    const res = await request.get('/user/user1').set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(200);
   });
 
-  it('/user/delete/user2 endpoint returns a status of 200', (done) => {
-    const res = request
-      .delete('/user/delete/user2')
-      .set('Authorization', `Bearer ${token}`)
-      .then((res) => {
-        expect(res.status).toBe(404);
-        done();
-      });
+  it('/user/delete/user2 endpoint returns a status of 200', async () => {
+    const res = await request.delete('/user/delete/user2').set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(404);
   });
 });
-export { token };

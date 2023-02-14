@@ -1,6 +1,5 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import express, { Request, Response, NextFunction } from 'express';
-import { User } from '../models/user';
+import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -24,20 +23,14 @@ const verifyAuthToken = async (
     }
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
       if (error) {
-        // console.log(error);
         return res.status(403).json({ error: error.message });
       }
       req.body.user = user;
       next();
     });
   } catch (error) {
-    // console.log(error);
     return res.status(401).json(`Access denied, invalid token: ${error}`);
   }
-};
-
-const logger = () => {
-  console.log('Endpoint reached');
 };
 
 export default verifyAuthToken;

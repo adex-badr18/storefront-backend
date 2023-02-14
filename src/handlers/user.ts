@@ -54,15 +54,14 @@ const authenticate = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     const user = await userStore.authenticate(username, password);
-    // console.log({ user: user });
     if (user !== null) {
       const token = jwtTokens(user);
-      return res.status(200).json(token);
+      res.status(200).json(token);
     } else {
       return res.status(404).json('Invalid login details');
     }
   } catch (error) {
-    res.json(`An error occurred: ${error}`);
+    return res.json(`An error occurred: ${error}`);
   }
 };
 
@@ -75,6 +74,7 @@ const deleteUser = async (req: Request, res: Response) => {
         .json({ error: `"${req.params.username}" not found.` });
     res.json(deleted);
   } catch (err) {
+    console.log(err);
     res.status(400).json(err);
   }
 };
