@@ -27,12 +27,11 @@ export class ProductStore {
       // @ts-ignore
       const conn = await client.connect();
       const result = await conn.query(sql, [id]);
+      conn.release();
 
       if (result.rows.length === 0) {
         return null;
       }
-
-      conn.release();
 
       return result.rows[0];
     } catch (err) {
@@ -47,12 +46,14 @@ export class ProductStore {
       const conn = await client.connect();
 
       const result = await conn.query(sql, [category]);
+
+      conn.release();
+
       if (result.rows.length === 0) {
         return null;
       }
 
       const products: Product[] = result.rows;
-      conn.release();
 
       return products;
     } catch (err) {
@@ -89,12 +90,14 @@ export class ProductStore {
       const sql = 'DELETE FROM products WHERE id=($1) RETURNING *';
       const result = await conn.query(sql, [id]);
 
+      conn.release();
+
       if (result.rows.length === 0) {
         return null;
       }
 
       const product: Product = result.rows[0];
-      conn.release();
+
       return product;
     } catch (err) {
       throw new Error(`Could not delete book ${id}. Error: ${err}`);

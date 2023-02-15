@@ -17,10 +17,10 @@ class Users {
             const conn = await database_1.default.connect();
             const sql = 'SELECT * FROM users';
             const users = await conn.query(sql);
+            conn.release();
             if (users.rows.length === 0) {
                 return null;
             }
-            conn.release();
             return users.rows;
         }
         catch (error) {
@@ -55,8 +55,8 @@ class Users {
                 u.username,
                 hash
             ]);
-            const user = result.rows[0];
             conn.release();
+            const user = result.rows[0];
             return user;
         }
         catch (error) {
@@ -68,6 +68,7 @@ class Users {
             const conn = await database_1.default.connect();
             const sql = 'SELECT * FROM users WHERE username=($1)';
             const result = await conn.query(sql, [username]);
+            conn.release();
             if (result.rows.length) {
                 const user = result.rows[0];
                 if (bcrypt_1.default.compareSync(password, user.password)) {
@@ -86,10 +87,10 @@ class Users {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [username]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             const user = result.rows[0];
-            conn.release();
             return user;
         }
         catch (err) {

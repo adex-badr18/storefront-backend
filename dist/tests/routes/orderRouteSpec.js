@@ -12,8 +12,8 @@ describe('Order Handlers Test Suite', () => {
     beforeAll(async () => {
         try {
             const conn = await database_1.default.connect();
-            const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
-            await conn.query(query);
+            const deleteQuery = 'TRUNCATE orders, products, users RESTART IDENTITY';
+            await conn.query(deleteQuery);
             conn.release();
         }
         catch (error) {
@@ -23,8 +23,8 @@ describe('Order Handlers Test Suite', () => {
     afterAll(async () => {
         try {
             const conn = await database_1.default.connect();
-            const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
-            const result = await conn.query(query);
+            const deleteQuery = 'TRUNCATE orders, products, users RESTART IDENTITY';
+            await conn.query(deleteQuery);
             conn.release();
         }
         catch (error) {
@@ -97,7 +97,6 @@ describe('Order Handlers Test Suite', () => {
     it('/order/delete/3 endpoint returns a status of 200', async () => {
         const res = await request.delete('/order/delete/3')
             .set('Authorization', `Bearer ${token}`);
-        // console.log('Token:', token);
         expect(res.status).toBe(404);
     });
 });

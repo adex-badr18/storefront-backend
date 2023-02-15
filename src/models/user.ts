@@ -22,10 +22,12 @@ export class Users {
       const conn = await client.connect();
       const sql = 'SELECT * FROM users';
       const users = await conn.query(sql);
+      conn.release();
+
       if (users.rows.length === 0) {
         return null;
       }
-      conn.release();
+
       return users.rows;
     } catch (error) {
       throw new Error(`${error}`);
@@ -39,7 +41,9 @@ export class Users {
       const sql = 'SELECT * FROM users WHERE username=($1)';
       const user = await conn.query(sql, [username]);
       conn.release();
+
       if (user.rows.length === 0) return null;
+
       return user.rows[0];
     } catch (error) {
       throw new Error(`${error}`);
@@ -61,9 +65,11 @@ export class Users {
         u.username,
         hash
       ]);
-      const user = result.rows[0];
 
       conn.release();
+
+      const user = result.rows[0];
+
       return user;
     } catch (error) {
       throw new Error(`Unable to create user (${u.username}): ${error}`);
@@ -75,6 +81,7 @@ export class Users {
       const conn = await client.connect();
       const sql = 'SELECT * FROM users WHERE username=($1)';
       const result = await conn.query(sql, [username]);
+      conn.release();
 
       if (result.rows.length) {
         const user = result.rows[0];
@@ -97,11 +104,11 @@ export class Users {
 
       const result = await conn.query(sql, [username]);
 
+      conn.release();
+
       if (result.rows.length === 0) return null;
 
       const user = result.rows[0];
-
-      conn.release();
 
       return user;
     } catch (err) {

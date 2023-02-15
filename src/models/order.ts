@@ -22,11 +22,11 @@ export class OrderStore {
         o.user_id,
         o.status
       ]);
+      conn.release();
 
       if (result.rows.length === 0) return null
 
       const order = result.rows[0];
-      conn.release();
       return order;
     } catch (err) {
       throw new Error(`Could not add new order. Error: ${err}`);
@@ -56,9 +56,9 @@ export class OrderStore {
 
       const result = await conn.query(sql, [id]);
 
-      if (result.rows.length === 0) return null;
-
       conn.release();
+
+      if (result.rows.length === 0) return null;
 
       return result.rows[0];
     } catch (err) {
@@ -75,10 +75,11 @@ export class OrderStore {
 
       const result = await conn.query(sql, [status]);
 
+      conn.release();
+
       if (result.rows.length === 0) return null;
 
       const orders = result.rows;
-      conn.release();
 
       return orders;
     } catch (err) {
@@ -94,11 +95,11 @@ export class OrderStore {
 
       const result = await conn.query(sql, [id]);
 
+      conn.release();
+
       if (result.rows.length === 0) return null;
 
       const order = result.rows[0];
-
-      conn.release();
 
       return order;
     } catch (err) {
@@ -112,6 +113,7 @@ export class OrderStore {
       const sql =
         "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='active' AND o.user_id=($1) ORDER BY amount DESC";
       const result = await conn.query(sql, [user_id]);
+
       conn.release();
 
       if (result.rows.length === 0) return null;

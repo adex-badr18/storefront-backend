@@ -17,10 +17,10 @@ class OrderStore {
                 o.user_id,
                 o.status
             ]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             const order = result.rows[0];
-            conn.release();
             return order;
         }
         catch (err) {
@@ -46,9 +46,9 @@ class OrderStore {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [id]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
-            conn.release();
             return result.rows[0];
         }
         catch (err) {
@@ -61,10 +61,10 @@ class OrderStore {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [status]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             const orders = result.rows;
-            conn.release();
             return orders;
         }
         catch (err) {
@@ -77,10 +77,10 @@ class OrderStore {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [id]);
+            conn.release();
             if (result.rows.length === 0)
                 return null;
             const order = result.rows[0];
-            conn.release();
             return order;
         }
         catch (err) {

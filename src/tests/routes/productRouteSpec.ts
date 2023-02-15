@@ -11,8 +11,8 @@ describe('Product Handler Test Suite', () => {
   beforeAll(async () => {
     try {
       const conn = await client.connect();
-      const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
-      await conn.query(query);
+      const deleteQuery = 'TRUNCATE orders, products, users RESTART IDENTITY';
+      await conn.query(deleteQuery);
       conn.release();
     } catch (error) {
       throw new Error(`${error}`);

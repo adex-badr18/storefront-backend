@@ -25,10 +25,10 @@ class ProductStore {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [id]);
+            conn.release();
             if (result.rows.length === 0) {
                 return null;
             }
-            conn.release();
             return result.rows[0];
         }
         catch (err) {
@@ -41,11 +41,11 @@ class ProductStore {
             // @ts-ignore
             const conn = await database_1.default.connect();
             const result = await conn.query(sql, [category]);
+            conn.release();
             if (result.rows.length === 0) {
                 return null;
             }
             const products = result.rows;
-            conn.release();
             return products;
         }
         catch (err) {
@@ -72,11 +72,11 @@ class ProductStore {
             const conn = await database_1.default.connect();
             const sql = 'DELETE FROM products WHERE id=($1) RETURNING *';
             const result = await conn.query(sql, [id]);
+            conn.release();
             if (result.rows.length === 0) {
                 return null;
             }
             const product = result.rows[0];
-            conn.release();
             return product;
         }
         catch (err) {
