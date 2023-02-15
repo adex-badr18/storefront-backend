@@ -24,7 +24,7 @@ export class OrderStore {
       ]);
       conn.release();
 
-      if (result.rows.length === 0) return null
+      if (result.rows.length === 0) return null;
 
       const order = result.rows[0];
       return order;

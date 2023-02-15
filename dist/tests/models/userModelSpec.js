@@ -14,12 +14,12 @@ describe('User model test suite', () => {
             username: 'user1',
             password: 'user123'
         };
-        const newUser = await store.createUser(user);
+        await store.createUser(user);
     });
     afterAll(async () => {
         const conn = await database_1.default.connect();
         const sql = 'DELETE FROM users WHERE username IN ($1, $2)';
-        const result = await conn.query(sql, ['user1', 'user2']);
+        await conn.query(sql, ['user1', 'user2']);
         conn.release();
     });
     it('getAllUsers() should not be empty', async () => {
@@ -38,7 +38,7 @@ describe('User model test suite', () => {
             username: 'user2',
             password: 'user213'
         };
-        const newUser = await store.createUser(user);
+        await store.createUser(user);
         const conn = await database_1.default.connect();
         const sql = 'SELECT * FROM users WHERE username=($1)';
         const result = await conn.query(sql, [user.username]);

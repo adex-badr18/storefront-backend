@@ -10,7 +10,7 @@ const verifyAuthToken = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader.split(' ')[1];
-        const decoded = jsonwebtoken_1.default.decode(token, { complete: true });
+        jsonwebtoken_1.default.decode(token, { complete: true });
         if (!token) {
             return res.status(401).json({ error: 'Null token.' });
         }

@@ -35,22 +35,30 @@ describe('User Handler Test Suite', () => {
         expect(newUser.id).toEqual(1);
     });
     it('/user/login endpoint returns a status of 200', async () => {
-        const res = await request.post('/user/login').send({ username: user.username, password: user.password });
+        const res = await request
+            .post('/user/login')
+            .send({ username: user.username, password: user.password });
         token = res.body.accessToken;
         expect(res.status).toBe(200);
         expect(token).toBeTruthy();
     });
     it('/users endpoint returns a status of 200', async () => {
-        const res = await request.get('/users').set('Authorization', `Bearer ${token}`);
+        const res = await request
+            .get('/users')
+            .set('Authorization', `Bearer ${token}`);
         expect(res.status).toBe(200);
-        expect(res.body[0].username).toEqual(user.username);
+        expect(res.body[0].id).toEqual(user_id);
     });
     it('/user/user1 endpoint returns a status of 200', async () => {
-        const res = await request.get('/user/user1').set('Authorization', `Bearer ${token}`);
+        const res = await request
+            .get('/user/user1')
+            .set('Authorization', `Bearer ${token}`);
         expect(res.status).toBe(200);
     });
     it('/user/delete/user2 endpoint returns a status of 200', async () => {
-        const res = await request.delete('/user/delete/user2').set('Authorization', `Bearer ${token}`);
+        const res = await request
+            .delete('/user/delete/user2')
+            .set('Authorization', `Bearer ${token}`);
         expect(res.status).toBe(404);
     });
 });

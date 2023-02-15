@@ -28,7 +28,9 @@ describe('Product Handler Test Suite', () => {
     };
 
     await request.post('/user/signup').send(user);
-    const res = await request.post('/user/login').send({ username: user.username, password: user.password });
+    const res = await request
+      .post('/user/login')
+      .send({ username: user.username, password: user.password });
     token = res.body.accessToken;
     expect(token).toBeDefined();
   });
@@ -40,7 +42,8 @@ describe('Product Handler Test Suite', () => {
       category: 'Product-Category'
     };
 
-    const res = await request.post('/product/create')
+    const res = await request
+      .post('/product/create')
       .send(product)
       .set('Authorization', `Bearer ${token}`);
     const newProduct: Product = res.body;
@@ -50,14 +53,14 @@ describe('Product Handler Test Suite', () => {
   });
 
   it('/products/ProductCategory endpoint returns a status of 404', (done) => {
-    const res = request.get('/products/ProductCategory').then((res) => {
+    request.get('/products/ProductCategory').then((res) => {
       expect(res.status).toBe(404);
       done();
     });
   });
 
   it('/products endpoint returns a list of product(s)', (done) => {
-    const res = request.get('/products').then((res) => {
+    request.get('/products').then((res) => {
       expect(res.status).toBe(200);
       expect(res.body[0].category).toEqual('Product-Category');
       done();
@@ -65,7 +68,7 @@ describe('Product Handler Test Suite', () => {
   });
 
   it('/product/1 endpoint returns a status of 200', (done) => {
-    const res = request.get('/product/1').then((res) => {
+    request.get('/product/1').then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.id).toEqual(1);
       done();
@@ -73,7 +76,7 @@ describe('Product Handler Test Suite', () => {
   });
 
   it('/product/delete/1 endpoint returns a status of 200', (done) => {
-    const res = request
+    request
       .delete('/product/delete/1')
       .set('Authorization', `Bearer ${token}`)
       .then((res) => {

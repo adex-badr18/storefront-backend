@@ -28,7 +28,9 @@ describe('Product Handler Test Suite', () => {
             password: 'password1'
         };
         await request.post('/user/signup').send(user);
-        const res = await request.post('/user/login').send({ username: user.username, password: user.password });
+        const res = await request
+            .post('/user/login')
+            .send({ username: user.username, password: user.password });
         token = res.body.accessToken;
         expect(token).toBeDefined();
     });
@@ -38,7 +40,8 @@ describe('Product Handler Test Suite', () => {
             price: 22000,
             category: 'Product-Category'
         };
-        const res = await request.post('/product/create')
+        const res = await request
+            .post('/product/create')
             .send(product)
             .set('Authorization', `Bearer ${token}`);
         const newProduct = res.body;
@@ -47,27 +50,27 @@ describe('Product Handler Test Suite', () => {
         expect(newProduct.name).toEqual('Product1');
     });
     it('/products/ProductCategory endpoint returns a status of 404', (done) => {
-        const res = request.get('/products/ProductCategory').then((res) => {
+        request.get('/products/ProductCategory').then((res) => {
             expect(res.status).toBe(404);
             done();
         });
     });
     it('/products endpoint returns a list of product(s)', (done) => {
-        const res = request.get('/products').then((res) => {
+        request.get('/products').then((res) => {
             expect(res.status).toBe(200);
             expect(res.body[0].category).toEqual('Product-Category');
             done();
         });
     });
     it('/product/1 endpoint returns a status of 200', (done) => {
-        const res = request.get('/product/1').then((res) => {
+        request.get('/product/1').then((res) => {
             expect(res.status).toBe(200);
             expect(res.body.id).toEqual(1);
             done();
         });
     });
     it('/product/delete/1 endpoint returns a status of 200', (done) => {
-        const res = request
+        request
             .delete('/product/delete/1')
             .set('Authorization', `Bearer ${token}`)
             .then((res) => {

@@ -9,13 +9,6 @@ const productStore = new ProductStore();
 
 describe('Order model test suite', () => {
   beforeAll(async () => {
-    // delete existing records from all tables
-    const conn = await client.connect();
-    const query = 'TRUNCATE products, orders, users RESTART IDENTITY;'
-    // 'DELETE FROM orders; DELETE FROM products; DELETE FROM users; ALTER SEQUENCE orders_id_seq RESTART WITH 1; ALTER SEQUENCE products_id_seq RESTART WITH 1; ALTER SEQUENCE users_id_seq RESTART WITH 1;';
-    await conn.query(query);
-
-    // create new user, new product and new order
     const user: User = {
       firstName: 'UserOrder',
       lastName: 'UserOrder',
@@ -23,14 +16,6 @@ describe('Order model test suite', () => {
       password: 'user123'
     };
 
-    const product: Product = {
-      name: 'Hyundai Elantra 4 order1',
-      price: 200000,
-      category: 'Hyundai'
-    };
-    const newProduct = await productStore.create(product);
-    const newUser = await userStore.createUser(user);
-    conn.release();
     const order: Order = {
       product_id: 1,
       quantity: 50000,
@@ -38,19 +23,34 @@ describe('Order model test suite', () => {
       status: 'active'
     };
 
-    const newOrder = await orderStore.createOrder(order);
-  });
+    const product: Product = {
+      name: 'Hyundai Elantra 4 order1',
+      price: 200000,
+      category: 'Hyundai'
+    };
+    // delete existing records from all tables
+    const conn = await client.connect();
+    const query = 'TRUNCATE products, orders, users RESTART IDENTITY;';
 
-  // beforeEach(function () {
-  //   const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-  //   jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
-  // });
+    await conn.query(query);
+
+    // create new user, new product and new order
+    // create new product
+    await productStore.create(product);
+
+    // create new user
+    await userStore.createUser(user);
+
+    // create new order
+    await orderStore.createOrder(order);
+    conn.release();
+  });
 
   afterAll(async () => {
     try {
       const conn = await client.connect();
       const query = 'TRUNCATE products, orders, users RESTART IDENTITY';
-      const result = await conn.query(query);
+      await conn.query(query);
       conn.release();
     } catch (error) {
       throw new Error(`${error}`);

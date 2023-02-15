@@ -2,14 +2,6 @@ import { Product, ProductStore } from '../../models/product';
 import client from '../../database';
 
 const store = new ProductStore();
-const categoriesArray: Product[] | null = [
-  {
-    id: 10,
-    name: 'Hyundai Elantra',
-    price: 220.0,
-    category: 'Hyundai'
-  }
-];
 
 describe('Product model test suite', () => {
   beforeAll(async () => {
@@ -19,13 +11,13 @@ describe('Product model test suite', () => {
       category: 'Hyundai'
     };
 
-    const newProduct = await store.create(product);
+    await store.create(product);
   });
 
   afterAll(async () => {
     const conn = await client.connect();
     const sql = 'DELETE FROM products WHERE name IN ($1, $2)';
-    const result = await conn.query(sql, ['Hyundai Elantra', 'Lexus G7']);
+    await conn.query(sql, ['Hyundai Elantra', 'Lexus G7']);
     conn.release();
   });
 
@@ -51,7 +43,7 @@ describe('Product model test suite', () => {
       category: 'Lexus'
     };
 
-    const newProduct = await store.create(product);
+    await store.create(product);
 
     const conn = await client.connect();
     const sql = 'SELECT * FROM products WHERE name=($1)';

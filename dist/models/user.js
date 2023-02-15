@@ -8,7 +8,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = __importDefault(require("../database"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const pepper = process.env.BCRYPT_PASSWORD;
+// const pepper = process.env.BCRYPT_PASSWORD;
 const saltRounds = +process.env.SALT_ROUNDS;
 class Users {
     async getAllUsers() {

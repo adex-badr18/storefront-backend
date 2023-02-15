@@ -53,7 +53,7 @@ const createOrder = async (req: Request, res: Response) => {
 
     const newOrder = await orders.createOrder(order);
 
-    if (newOrder === null) return res.status(400).json('Something went wrong')
+    if (newOrder === null) return res.status(400).json('Something went wrong');
 
     res.status(201).json(newOrder);
   } catch (err) {
