@@ -69,7 +69,7 @@ export class OrderStore {
     try {
       const conn = await client.connect(); // connect to the database
       const sql =
-        'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id'; // write the sql query
+        'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id';
       const result = await conn.query(sql); // run the sql query on the database
       conn.release(); // close database connection
       return result.rows; // return the rows contained in the database query result
