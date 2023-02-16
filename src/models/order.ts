@@ -110,24 +110,35 @@ export class OrderStore {
     }
   }
 
-  async getOrdersByStatus(status: string): Promise<Order[] | null> {
+  async getOrdersByStatus(status: string): Promise<OrderReturnedType | null> {
     try {
-      const sql =
-        'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status=($1)';
       // @ts-ignore
       const conn = await client.connect();
 
+      const sql =
+        'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE o.status=($1)';
       const result = await conn.query(sql, [status]);
-
       conn.release();
 
       if (result.rows.length === 0) return null;
 
-      const orders = result.rows;
+      const products: OrderedProduct[] = result.rows.map((product) => {
+        return {
+          id: product.product_id,
+          name: product.product_name,
+          quantity: product.quantity,
+          price: product.product_price
+        };
+      });
 
-      return orders;
+      return {
+        id: result.rows[0].order_id,
+        user_id: result.rows[0].user_id,
+        status: status,
+        products
+      };
     } catch (err) {
-      throw new Error(`Could not fetch orders. Error: ${err}`);
+      throw new Error(`Could not find order with status ${status}. Error: ${err}`);
     }
   }
 
