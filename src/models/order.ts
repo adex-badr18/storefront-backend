@@ -1,33 +1,64 @@
 import client from '../database';
 
-export type Order = {
-  id?: number;
-  product_id: number;
+export type OrderedProduct = {
+  id: number | string;
   quantity: number;
+  name?: string;
+  price?: number | string;
+};
+
+export type OrderInit = {
   user_id: number;
   status: string;
+}
+
+export type Order = OrderInit & {
+  products: OrderedProduct[]
+};
+
+export type OrderReturnedType = OrderInit & {
+  id: number | string;
+  products?: OrderedProduct[];
 };
 
 export class OrderStore {
-  async createOrder(o: Order): Promise<Order | null> {
+  async createOrder(order: Order): Promise<OrderReturnedType | null> {
     try {
-      const sql =
-        'INSERT INTO orders (product_id, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *';
       // @ts-ignore
       const conn = await client.connect();
 
-      const result = await conn.query(sql, [
-        o.product_id,
-        o.quantity,
-        o.user_id,
-        o.status
-      ]);
+      // populate order table
+      const createOrderQuery =
+        'INSERT INTO orders (user_id, status) VALUES($1, $2) RETURNING *';
+      const orderResult = await conn.query(createOrderQuery, [order.user_id, order.status]);
+
+      // get id of newly created order
+      const orderId: number = orderResult.rows[0].id;
+
+      // populate order_products table with all ordered products by the user.
+      const orderProductQuery = 'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+
+      const products: OrderedProduct[] = [];
+
+      for (const product of order.products) {
+        const result = await conn.query(orderProductQuery, [orderId, product.id, product.quantity]);
+
+        products.push({
+          id: result.rows[0].product_id,
+          quantity: result.rows[0].quantity
+        });
+      }
       conn.release();
 
-      if (result.rows.length === 0) return null;
 
-      const order = result.rows[0];
-      return order;
+      if (orderResult.rows.length === 0 || products.length === 0) return null;
+
+      return {
+        id: orderId,
+        products: products,
+        user_id: orderResult.rows[0].user_id,
+        status: orderResult.rows[0].status
+      };
     } catch (err) {
       throw new Error(`Could not add new order. Error: ${err}`);
     }
