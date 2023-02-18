@@ -32,7 +32,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - [OPTIONAL] Completed Orders by user (args: user id)[token required]: `GET http://localhost:3000/orders/completed/1`
 
 ## Data Shapes
-### Product
+### products
 -  id
 - name
 - price
@@ -47,7 +47,7 @@ CREATE TABLE products (
 );
 ```
 
-### User
+### users
 - id
 - firstName
 - lastName
@@ -64,19 +64,28 @@ CREATE TABLE users (
 );
 ```
 
-#### Orders
+#### orders
 - id
-- product_id: id of each product in the order
-- quantity: Quantity of each product in the order
-- user_id
+- user_id: id of the user that placed the order
 - status: Status of order (active or complete)
 
 ```
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
-    product_id INTEGER REFERENCES products(id) NOT NULL,
-    quantity INTEGER NOT NULL,
-    user_id INTEGER REFERENCES users(id) NOT NULL,
+    user_id INTEGER REFERENCES users(id),
     status VARCHAR(20) DEFAULT 'active'
+);
+```
+
+#### order_products
+- order_id: id of each order
+- product_id: id of each ordered product
+- quantity: Quantity of each product in the order
+
+```
+CREATE TABLE order_products (
+order_id INTEGER REFERENCES orders(id),
+product_id INTEGER REFERENCES products(id),
+quantity INTEGER NOT NULL
 );
 ```
