@@ -5,10 +5,10 @@ POST http://localhost:3000/user/signup
 Content-Type: application/json
 
 {
-    "firstName": "User2firstname",
-    "lastName": "User2lastname",
-    "username": "user2",
-    "password": "user213"
+    "firstName": "User1firstname",
+    "lastName": "User1lastname",
+    "username": "user1",
+    "password": "user113"
 }
 
 ###
@@ -22,15 +22,15 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 
 ###
-GET http://localhost:3000/user/user1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+GET http://localhost:3000/user/user2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 
 ###
 DELETE http://localhost:3000/user/delete/user1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 
 ###
 GET http://localhost:3000/products
@@ -39,60 +39,72 @@ GET http://localhost:3000/products
 GET http://localhost:3000/product/1
 
 ###
-GET http://localhost:3000/products/Product-Category
+GET http://localhost:3000/products/Hyundai
 
 ###
 POST http://localhost:3000/product/create
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 Content-Type: application/json
 
 {
-    "name": "Hyundai Elantra",
-    "price": "220",
-    "category": "Hyundai"
+    "name": "Peugeot 407",
+    "price": "250",
+    "category": "Peugeot"
 }
 
 ###
 DELETE http://localhost:3000/product/delete/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 
 ###
 POST http://localhost:3000/order/create
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2MDMxOTgsImV4cCI6MTY3NjYzOTE5OH0.hxlt-MKBbX7h2oMsDP-i3Nu50sBnrBiwp2LPHForRNI
 Content-Type: application/json
 
 {
-    "product_id": "1",
-    "quantity": "3",
-    "user_id": "1",
-    "status": "active"
+    "user_id": "2",
+    "status": "active",
+    "products": [
+        {
+            "id": "1",
+            "quantity": "3",
+            "name": "Hyundai Elantra",
+            "price": "220"
+        },
+        {
+            "id": "2",
+            "quantity": "5",
+            "name": "Peugeot 407",
+            "price": "250"
+        }
+    ]
 }
 
 ###
 GET http://localhost:3000/orders
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4
 Content-Type: application/json
 
 ###
-GET http://localhost:3000/order/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+GET http://localhost:3000/order/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4
 Content-Type: application/json
 
 ###
 GET http://localhost:3000/orders/active
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4
 Content-Type: application/json
 
 ###
-GET http://localhost:3000/orders/active/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+GET http://localhost:3000/orders/active/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4
 Content-Type: application/json
 
 ###
-GET http://localhost:3000/orders/completed/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+GET http://localhost:3000/orders/completed/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4
 Content-Type: application/json
 
 ###
-DELETE http://localhost:3000/order/delete/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkWW1DVnQ4MkkxaG1CV2lEVGV3WmZOZVRaNlUweExtSnVrcWsxNkJnTnc2cFUvVUZXL2E5UlciLCJpYXQiOjE2NzYxNjgzODcsImV4cCI6MTY3NjIwNDM4N30.BVU8whQzbZiJ1R6yePhhGR69NJfKuwBnIgAtOnYFIrU
+DELETE http://localhost:3000/order/delete/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiVXNlcjJmaXJzdG5hbWUiLCJsYXN0bmFtZSI6IlVzZXIybGFzdG5hbWUiLCJ1c2VybmFtZSI6InVzZXIyIiwicGFzc3dvcmQiOiIkMmIkMTAkQjRLWW9WQ1pNeUhncHN5RVhRZVQudWFmUUIxT3pFTk55alowMXhUV2M4S1hVbVRHTFJCZ0MiLCJpYXQiOjE2NzY2ODY2MTMsImV4cCI6MTY3NjcyMjYxM30.pJxis1YHM4grH_JDlLducSQZ7UwuwAlJQgoCYizPDo4

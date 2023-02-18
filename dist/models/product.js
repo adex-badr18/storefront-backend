@@ -13,6 +13,8 @@ class ProductStore {
             const sql = 'SELECT * FROM products'; // write the sql query
             const result = await conn.query(sql); // run the sql query on the database
             conn.release(); // close database connection
+            if (result.rows.length === 0)
+                return null;
             return result.rows; // return the rows contained in the database query result
         }
         catch (error) {

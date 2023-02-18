@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import verifyAuthToken from '../middleware/verifyAuthToken';
-import { Order, OrderStore } from '../models/order';
+import { Order, OrderedProduct, OrderReturnedType, AllOrders, OrderStore } from '../models/order';
 
 const orders = new OrderStore();
 
@@ -44,14 +44,11 @@ const getOrdersByStatus = async (req: Request, res: Response) => {
 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const order: Order = {
-      product_id: +req.body.product_id,
-      quantity: +req.body.quantity,
-      user_id: +req.body.user_id,
-      status: req.body.status
-    };
-
-    const newOrder = await orders.createOrder(order);
+    const newOrder = await orders.createOrder({
+      user_id: req.body.user_id,
+      status: req.body.status,
+      products: req.body.products
+    });
 
     if (newOrder === null) return res.status(400).json('Something went wrong');
 

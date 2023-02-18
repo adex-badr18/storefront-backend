@@ -5,6 +5,7 @@ export type OrderedProduct = {
   quantity: number;
   name?: string;
   price?: number | string;
+  amount?: number;
 };
 
 export type OrderInit = {
@@ -20,6 +21,18 @@ export type OrderReturnedType = OrderInit & {
   id: number | string;
   products?: OrderedProduct[];
 };
+
+export type AllOrders = {
+  id: number;
+  product_id: number;
+  user_id: number;
+  product_name: string;
+  price: number;
+  category: string;
+  quantity: number;
+  status: string;
+  amount: number;
+}
 
 export class OrderStore {
   async createOrder(order: Order): Promise<OrderReturnedType | null> {
@@ -55,16 +68,16 @@ export class OrderStore {
 
       return {
         id: orderId,
-        products: products,
         user_id: orderResult.rows[0].user_id,
-        status: orderResult.rows[0].status
+        status: orderResult.rows[0].status,
+        products: products,
       };
     } catch (err) {
       throw new Error(`Could not add new order. Error: ${err}`);
     }
   }
 
-  async getAllOrders(): Promise<Order[]> {
+  async getAllOrders(): Promise<AllOrders[]> {
     // a method that returns a list of all items in the database.
     try {
       const conn = await client.connect(); // connect to the database
@@ -85,6 +98,7 @@ export class OrderStore {
 
       const sql =
         'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE order_id=($1)';
+      // const sql = 'SELECT * FROM orders WHERE id=($1)';
       const result = await conn.query(sql, [id]);
       conn.release();
 
@@ -95,7 +109,8 @@ export class OrderStore {
           id: product.product_id,
           name: product.product_name,
           quantity: product.quantity,
-          price: product.product_price
+          price: product.product_price,
+          amount: product.amount
         };
       });
 
@@ -110,7 +125,7 @@ export class OrderStore {
     }
   }
 
-  async getOrdersByStatus(status: string): Promise<OrderReturnedType | null> {
+  async getOrdersByStatus(status: string): Promise<AllOrders[] | null> {
     try {
       // @ts-ignore
       const conn = await client.connect();
@@ -119,24 +134,8 @@ export class OrderStore {
         'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE o.status=($1)';
       const result = await conn.query(sql, [status]);
       conn.release();
-
       if (result.rows.length === 0) return null;
-
-      const products: OrderedProduct[] = result.rows.map((product) => {
-        return {
-          id: product.product_id,
-          name: product.product_name,
-          quantity: product.quantity,
-          price: product.product_price
-        };
-      });
-
-      return {
-        id: result.rows[0].order_id,
-        user_id: result.rows[0].user_id,
-        status: status,
-        products
-      };
+      return result.rows;
     } catch (err) {
       throw new Error(`Could not find order with status ${status}. Error: ${err}`);
     }
@@ -172,7 +171,7 @@ export class OrderStore {
     }
   }
 
-  async userActiveOrders(user_id: number): Promise<OrderReturnedType | null> {
+  async userActiveOrders(user_id: number): Promise<OrderReturnedType[] | null> {
     try {
       // @ts-ignore
       const conn = await client.connect();
@@ -183,27 +182,53 @@ export class OrderStore {
       conn.release();
 
       if (result.rows.length === 0) return null;
+      // console.log(result.rows.length);
+      // console.log(result.rows);
 
-      const products: OrderedProduct[] = result.rows.map((product) => {
-        return {
-          id: product.product_id,
-          name: product.product_name,
-          quantity: product.quantity,
-          price: product.product_price
-        };
-      });
+      let formattedOrders: OrderReturnedType[] =
+        [
+          {
+            id: 0,
+            user_id: 0,
+            status: '',
+            products: []
+          }
+        ];
 
-      return {
-        id: result.rows[0].order_id,
-        user_id: user_id,
-        status: result.rows[0].status,
-        products
-      };
+      formattedOrders.pop(); // remove the initial item.
+      for (const res of result.rows) {
+        // const products: OrderedProduct[] = result.rows.map((product) => {
+        //   return {
+        //     id: product.product_id,
+        //     name: product.product_name,
+        //     quantity: product.quantity,
+        //     price: product.product_price
+        //   };
+        // });
+        formattedOrders.push({
+          id: res.order_id,
+          user_id: res.user_id,
+          status: res.status,
+          products: [
+            {
+              id: res.product_id,
+              name: res.product_name,
+              quantity: res.quantity,
+              price: res.product_price,
+              amount: res.amount
+            }
+          ]
+        });
+
+      }
+      // console.log(formatted);
+      return formattedOrders;
     } catch (err) {
       throw new Error(`Could not find order: ${err}.`);
     }
   }
-  async userCompletedOrders(user_id: number): Promise<OrderReturnedType | null> {
+
+  async userCompletedOrders(user_id: number): Promise<OrderReturnedType[] | null> {
     try {
       // @ts-ignore
       const conn = await client.connect();
@@ -215,21 +240,44 @@ export class OrderStore {
 
       if (result.rows.length === 0) return null;
 
-      const products: OrderedProduct[] = result.rows.map((product) => {
-        return {
-          id: product.product_id,
-          name: product.product_name,
-          quantity: product.quantity,
-          price: product.product_price
-        };
-      });
+      let formattedOrders: OrderReturnedType[] =
+        [
+          {
+            id: 0,
+            user_id: 0,
+            status: '',
+            products: []
+          }
+        ];
 
-      return {
-        id: result.rows[0].order_id,
-        user_id: user_id,
-        status: result.rows[0].status,
-        products
-      };
+      formattedOrders.pop(); // remove the initial item.
+      for (const res of result.rows) {
+        // const products: OrderedProduct[] = result.rows.map((product) => {
+        //   return {
+        //     id: product.product_id,
+        //     name: product.product_name,
+        //     quantity: product.quantity,
+        //     price: product.product_price
+        //   };
+        // });
+        formattedOrders.push({
+          id: res.order_id,
+          user_id: res.user_id,
+          status: res.status,
+          products: [
+            {
+              id: res.product_id,
+              name: res.product_name,
+              quantity: res.quantity,
+              price: res.product_price,
+              amount: res.amount
+            }
+          ]
+        });
+
+      }
+      // console.log(formatted);
+      return formattedOrders;
     } catch (err) {
       throw new Error(`Could not find order: ${err}`);
     }

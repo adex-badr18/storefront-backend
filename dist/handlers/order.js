@@ -46,13 +46,11 @@ const getOrdersByStatus = async (req, res) => {
 };
 const createOrder = async (req, res) => {
     try {
-        const order = {
-            product_id: +req.body.product_id,
-            quantity: +req.body.quantity,
-            user_id: +req.body.user_id,
-            status: req.body.status
-        };
-        const newOrder = await orders.createOrder(order);
+        const newOrder = await orders.createOrder({
+            user_id: req.body.user_id,
+            status: req.body.status,
+            products: req.body.products
+        });
         if (newOrder === null)
             return res.status(400).json('Something went wrong');
         res.status(201).json(newOrder);

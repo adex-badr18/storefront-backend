@@ -8,13 +8,14 @@ export type Product = {
 };
 
 export class ProductStore {
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(): Promise<Product[] | null> {
     // a method that returns a list of all items in the database.
     try {
       const conn = await client.connect(); // connect to the database
       const sql = 'SELECT * FROM products'; // write the sql query
       const result = await conn.query(sql); // run the sql query on the database
       conn.release(); // close database connection
+      if (result.rows.length === 0) return null
       return result.rows; // return the rows contained in the database query result
     } catch (error) {
       throw new Error(`Error fetching data: ${error}`);

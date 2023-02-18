@@ -6,22 +6,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderStore = void 0;
 const database_1 = __importDefault(require("../database"));
 class OrderStore {
-    async createOrder(o) {
+    async createOrder(order) {
         try {
-            const sql = 'INSERT INTO orders (product_id, quantity, user_id, status) VALUES($1, $2, $3, $4) RETURNING *';
             // @ts-ignore
             const conn = await database_1.default.connect();
-            const result = await conn.query(sql, [
-                o.product_id,
-                o.quantity,
-                o.user_id,
-                o.status
-            ]);
+            // populate order table
+            const createOrderQuery = 'INSERT INTO orders (user_id, status) VALUES($1, $2) RETURNING *';
+            const orderResult = await conn.query(createOrderQuery, [order.user_id, order.status]);
+            // get id of newly created order
+            const orderId = orderResult.rows[0].id;
+            // populate order_products table with all ordered products by the user.
+            const orderProductQuery = 'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+            const products = [];
+            for (const product of order.products) {
+                const result = await conn.query(orderProductQuery, [orderId, product.id, product.quantity]);
+                products.push({
+                    id: result.rows[0].product_id,
+                    quantity: result.rows[0].quantity
+                });
+            }
             conn.release();
-            if (result.rows.length === 0)
+            if (orderResult.rows.length === 0 || products.length === 0)
                 return null;
-            const order = result.rows[0];
-            return order;
+            return {
+                id: orderId,
+                user_id: orderResult.rows[0].user_id,
+                status: orderResult.rows[0].status,
+                products: products,
+            };
         }
         catch (err) {
             throw new Error(`Could not add new order. Error: ${err}`);
@@ -31,7 +43,7 @@ class OrderStore {
         // a method that returns a list of all items in the database.
         try {
             const conn = await database_1.default.connect(); // connect to the database
-            const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id'; // write the sql query
+            const sql = 'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id';
             const result = await conn.query(sql); // run the sql query on the database
             conn.release(); // close database connection
             return result.rows; // return the rows contained in the database query result
@@ -42,14 +54,29 @@ class OrderStore {
     }
     async getOrderById(id) {
         try {
-            const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.user_id=($1)';
             // @ts-ignore
             const conn = await database_1.default.connect();
+            const sql = 'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE order_id=($1)';
+            // const sql = 'SELECT * FROM orders WHERE id=($1)';
             const result = await conn.query(sql, [id]);
             conn.release();
             if (result.rows.length === 0)
                 return null;
-            return result.rows[0];
+            const products = result.rows.map((product) => {
+                return {
+                    id: product.product_id,
+                    name: product.product_name,
+                    quantity: product.quantity,
+                    price: product.product_price,
+                    amount: product.amount
+                };
+            });
+            return {
+                id,
+                user_id: result.rows[0].user_id,
+                status: result.rows[0].status,
+                products
+            };
         }
         catch (err) {
             throw new Error(`Could not find order with id ${id}. Error: ${err}`);
@@ -57,31 +84,40 @@ class OrderStore {
     }
     async getOrdersByStatus(status) {
         try {
-            const sql = 'SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status=($1)';
             // @ts-ignore
             const conn = await database_1.default.connect();
+            const sql = 'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE o.status=($1)';
             const result = await conn.query(sql, [status]);
             conn.release();
             if (result.rows.length === 0)
                 return null;
-            const orders = result.rows;
-            return orders;
+            return result.rows;
         }
         catch (err) {
-            throw new Error(`Could not fetch orders. Error: ${err}`);
+            throw new Error(`Could not find order with status ${status}. Error: ${err}`);
         }
     }
     async deleteOrder(id) {
         try {
-            const sql = 'DELETE FROM orders WHERE id=($1) RETURNING *';
             // @ts-ignore
             const conn = await database_1.default.connect();
-            const result = await conn.query(sql, [id]);
+            // retrieve full info of the order to be deleted
+            const toBeDeleted = await this.getOrderById(id);
+            // Delete order
+            const deleteOrderQuery = 'DELETE FROM orders WHERE id=($1) RETURNING *';
+            const deleteOrderResult = await conn.query(deleteOrderQuery, [id]);
+            // Delete ordered_product
+            const deleteOrderProductQuery = 'DELETE FROM order_products WHERE order_id=($1) RETURNING *';
+            const deleteOrderProductResult = await conn.query(deleteOrderProductQuery, [id]);
             conn.release();
-            if (result.rows.length === 0)
+            if (deleteOrderResult.rows.length === 0 || deleteOrderProductResult.rows.length === 0)
                 return null;
-            const order = result.rows[0];
-            return order;
+            return {
+                id,
+                user_id: deleteOrderResult.rows[0].user_id,
+                status: deleteOrderResult.rows[0].status,
+                products: toBeDeleted.products
+            };
         }
         catch (err) {
             throw new Error(`Could not delete order. Error: ${err}`);
@@ -89,30 +125,102 @@ class OrderStore {
     }
     async userActiveOrders(user_id) {
         try {
+            // @ts-ignore
             const conn = await database_1.default.connect();
-            const sql = "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='active' AND o.user_id=($1) ORDER BY amount DESC";
-            const result = await conn.query(sql, [user_id]);
+            const sql = 'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE o.status=($1) AND o.user_id=($2)';
+            const result = await conn.query(sql, ['active', user_id]);
             conn.release();
             if (result.rows.length === 0)
                 return null;
-            return result.rows;
+            // console.log(result.rows.length);
+            // console.log(result.rows);
+            let formattedOrders = [
+                {
+                    id: 0,
+                    user_id: 0,
+                    status: '',
+                    products: []
+                }
+            ];
+            formattedOrders.pop(); // remove the initial item.
+            for (const res of result.rows) {
+                // const products: OrderedProduct[] = result.rows.map((product) => {
+                //   return {
+                //     id: product.product_id,
+                //     name: product.product_name,
+                //     quantity: product.quantity,
+                //     price: product.product_price
+                //   };
+                // });
+                formattedOrders.push({
+                    id: res.order_id,
+                    user_id: res.user_id,
+                    status: res.status,
+                    products: [
+                        {
+                            id: res.product_id,
+                            name: res.product_name,
+                            quantity: res.quantity,
+                            price: res.product_price,
+                            amount: res.amount
+                        }
+                    ]
+                });
+            }
+            // console.log(formatted);
+            return formattedOrders;
         }
-        catch (error) {
-            throw new Error(`Error fetching active orders: ${error}`);
+        catch (err) {
+            throw new Error(`Could not find order: ${err}.`);
         }
     }
     async userCompletedOrders(user_id) {
         try {
+            // @ts-ignore
             const conn = await database_1.default.connect();
-            const sql = "SELECT o.id order_id, o.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, o.quantity, o.status, (p.price * o.quantity) amount FROM products p JOIN orders o ON p.id=o.product_id JOIN users u ON u.id=o.user_id WHERE o.status='complete' AND o.user_id=($1) ORDER BY amount DESC";
-            const result = await conn.query(sql, [user_id]);
+            const sql = 'SELECT o.id order_id, op.product_id, o.user_id, p.name product_name, p.price product_price, p.category product_category, op.quantity, o.status, (p.price * op.quantity) amount FROM products p JOIN order_products op ON p.id=op.product_id JOIN orders o ON op.order_id=o.id WHERE o.status=($1) AND o.user_id=($2)';
+            const result = await conn.query(sql, ['complete', user_id]);
             conn.release();
             if (result.rows.length === 0)
                 return null;
-            return result.rows;
+            let formattedOrders = [
+                {
+                    id: 0,
+                    user_id: 0,
+                    status: '',
+                    products: []
+                }
+            ];
+            formattedOrders.pop(); // remove the initial item.
+            for (const res of result.rows) {
+                // const products: OrderedProduct[] = result.rows.map((product) => {
+                //   return {
+                //     id: product.product_id,
+                //     name: product.product_name,
+                //     quantity: product.quantity,
+                //     price: product.product_price
+                //   };
+                // });
+                formattedOrders.push({
+                    id: res.order_id,
+                    user_id: res.user_id,
+                    status: res.status,
+                    products: [
+                        {
+                            id: res.product_id,
+                            name: res.product_name,
+                            quantity: res.quantity,
+                            price: res.product_price,
+                            amount: res.amount
+                        }
+                    ]
+                });
+            }
+            // console.log(formatted);
+            return formattedOrders;
         }
-        catch (error) {
-            throw new Error(`Error fetching completed orders: ${error}`);
+        catch (err) {
+            throw new Error(`Could not find order: ${err}`);
         }
     }
 }
