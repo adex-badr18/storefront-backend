@@ -46,7 +46,7 @@ describe('Product model test suite', () => {
         conn.release();
         expect(result.rows[0].price).toEqual('55555.00');
     });
-    it('delete() should return a truthy value', async () => {
+    it('delete() should return a null value', async () => {
         const deleted = await store.delete(50000);
         expect(deleted).toBeNull();
     });

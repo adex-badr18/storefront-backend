@@ -12,7 +12,7 @@ describe('Product Handler Test Suite', () => {
     beforeAll(async () => {
         try {
             const conn = await database_1.default.connect();
-            const deleteQuery = 'TRUNCATE orders, products, users RESTART IDENTITY';
+            const deleteQuery = 'TRUNCATE order_products, orders, products, users RESTART IDENTITY';
             await conn.query(deleteQuery);
             conn.release();
         }

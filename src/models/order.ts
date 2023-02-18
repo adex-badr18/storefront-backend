@@ -11,10 +11,10 @@ export type OrderedProduct = {
 export type OrderInit = {
   user_id: number;
   status: string;
-}
+};
 
 export type Order = OrderInit & {
-  products: OrderedProduct[]
+  products: OrderedProduct[];
 };
 
 export type OrderReturnedType = OrderInit & {
@@ -32,7 +32,7 @@ export type AllOrders = {
   quantity: number;
   status: string;
   amount: number;
-}
+};
 
 export class OrderStore {
   async createOrder(order: Order): Promise<OrderReturnedType | null> {
@@ -43,18 +43,26 @@ export class OrderStore {
       // populate order table
       const createOrderQuery =
         'INSERT INTO orders (user_id, status) VALUES($1, $2) RETURNING *';
-      const orderResult = await conn.query(createOrderQuery, [order.user_id, order.status]);
+      const orderResult = await conn.query(createOrderQuery, [
+        order.user_id,
+        order.status
+      ]);
 
       // get id of newly created order
       const orderId: number = orderResult.rows[0].id;
 
       // populate order_products table with all ordered products by the user.
-      const orderProductQuery = 'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
+      const orderProductQuery =
+        'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
 
       const products: OrderedProduct[] = [];
 
       for (const product of order.products) {
-        const result = await conn.query(orderProductQuery, [orderId, product.id, product.quantity]);
+        const result = await conn.query(orderProductQuery, [
+          orderId,
+          product.id,
+          product.quantity
+        ]);
 
         products.push({
           id: result.rows[0].product_id,
@@ -63,14 +71,13 @@ export class OrderStore {
       }
       conn.release();
 
-
       if (orderResult.rows.length === 0 || products.length === 0) return null;
 
       return {
         id: orderId,
         user_id: orderResult.rows[0].user_id,
         status: orderResult.rows[0].status,
-        products: products,
+        products: products
       };
     } catch (err) {
       throw new Error(`Could not add new order. Error: ${err}`);
@@ -137,7 +144,9 @@ export class OrderStore {
       if (result.rows.length === 0) return null;
       return result.rows;
     } catch (err) {
-      throw new Error(`Could not find order with status ${status}. Error: ${err}`);
+      throw new Error(
+        `Could not find order with status ${status}. Error: ${err}`
+      );
     }
   }
 
@@ -154,11 +163,19 @@ export class OrderStore {
       const deleteOrderResult = await conn.query(deleteOrderQuery, [id]);
 
       // Delete ordered_product
-      const deleteOrderProductQuery = 'DELETE FROM order_products WHERE order_id=($1) RETURNING *';
-      const deleteOrderProductResult = await conn.query(deleteOrderProductQuery, [id]);
+      const deleteOrderProductQuery =
+        'DELETE FROM order_products WHERE order_id=($1) RETURNING *';
+      const deleteOrderProductResult = await conn.query(
+        deleteOrderProductQuery,
+        [id]
+      );
       conn.release();
 
-      if (deleteOrderResult.rows.length === 0 || deleteOrderProductResult.rows.length === 0) return null;
+      if (
+        deleteOrderResult.rows.length === 0 ||
+        deleteOrderProductResult.rows.length === 0
+      )
+        return null;
 
       return {
         id,
@@ -185,15 +202,14 @@ export class OrderStore {
       // console.log(result.rows.length);
       // console.log(result.rows);
 
-      let formattedOrders: OrderReturnedType[] =
-        [
-          {
-            id: 0,
-            user_id: 0,
-            status: '',
-            products: []
-          }
-        ];
+      const formattedOrders: OrderReturnedType[] = [
+        {
+          id: 0,
+          user_id: 0,
+          status: '',
+          products: []
+        }
+      ];
 
       formattedOrders.pop(); // remove the initial item.
       for (const res of result.rows) {
@@ -219,7 +235,6 @@ export class OrderStore {
             }
           ]
         });
-
       }
       // console.log(formatted);
       return formattedOrders;
@@ -228,7 +243,9 @@ export class OrderStore {
     }
   }
 
-  async userCompletedOrders(user_id: number): Promise<OrderReturnedType[] | null> {
+  async userCompletedOrders(
+    user_id: number
+  ): Promise<OrderReturnedType[] | null> {
     try {
       // @ts-ignore
       const conn = await client.connect();
@@ -240,15 +257,14 @@ export class OrderStore {
 
       if (result.rows.length === 0) return null;
 
-      let formattedOrders: OrderReturnedType[] =
-        [
-          {
-            id: 0,
-            user_id: 0,
-            status: '',
-            products: []
-          }
-        ];
+      const formattedOrders: OrderReturnedType[] = [
+        {
+          id: 0,
+          user_id: 0,
+          status: '',
+          products: []
+        }
+      ];
 
       formattedOrders.pop(); // remove the initial item.
       for (const res of result.rows) {
@@ -274,7 +290,6 @@ export class OrderStore {
             }
           ]
         });
-
       }
       // console.log(formatted);
       return formattedOrders;

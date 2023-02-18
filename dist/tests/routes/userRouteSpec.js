@@ -19,7 +19,7 @@ describe('User Handler Test Suite', () => {
     beforeAll(async () => {
         try {
             const conn = await database_1.default.connect();
-            const query = 'TRUNCATE orders, products, users RESTART IDENTITY';
+            const query = 'TRUNCATE order_products, orders, products, users RESTART IDENTITY';
             await conn.query(query);
             conn.release();
         }
