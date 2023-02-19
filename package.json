@@ -13,8 +13,7 @@
     "test": "ENV=test db-migrate --env test up && tsc && jasmine && db-migrate db:drop test",
     "dev": "npm run build && npm run start",
     "prettier": "prettier --write src/*",
-    "lint": "eslint . --fix --ext .ts",
-    "tok": "npm run build && node dist/tests/utils/createToken.js"
+    "lint": "eslint . --fix --ext .ts"
   },
   "author": "Badrudeen A. Abdul-hameed",
   "license": "ISC",

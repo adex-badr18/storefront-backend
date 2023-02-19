@@ -31,7 +31,7 @@ describe('Order model test suite', () => {
         // };
         const order = {
             user_id: 1,
-            status: "active",
+            status: 'active',
             products: [
                 {
                     id: 1,
@@ -87,7 +87,7 @@ describe('Order model test suite', () => {
         await productStore.create(product);
         const order = {
             user_id: 1,
-            status: "active",
+            status: 'active',
             products: [
                 {
                     id: 2,

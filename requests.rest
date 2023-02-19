@@ -7,8 +7,8 @@ Content-Type: application/json
 {
     "firstName": "User1firstname",
     "lastName": "User1lastname",
-    "username": "user1",
-    "password": "user113"
+    "username": "user3",
+    "password": "user213"
 }
 
 ###
@@ -16,7 +16,7 @@ POST http://localhost:3000/user/login
 Content-Type: application/json
 
 {
-    "username": "user2",
+    "username": "user3",
     "password": "user213"
 }
 

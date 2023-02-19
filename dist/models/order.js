@@ -12,14 +12,21 @@ class OrderStore {
             const conn = await database_1.default.connect();
             // populate order table
             const createOrderQuery = 'INSERT INTO orders (user_id, status) VALUES($1, $2) RETURNING *';
-            const orderResult = await conn.query(createOrderQuery, [order.user_id, order.status]);
+            const orderResult = await conn.query(createOrderQuery, [
+                order.user_id,
+                order.status
+            ]);
             // get id of newly created order
             const orderId = orderResult.rows[0].id;
             // populate order_products table with all ordered products by the user.
             const orderProductQuery = 'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *';
             const products = [];
             for (const product of order.products) {
-                const result = await conn.query(orderProductQuery, [orderId, product.id, product.quantity]);
+                const result = await conn.query(orderProductQuery, [
+                    orderId,
+                    product.id,
+                    product.quantity
+                ]);
                 products.push({
                     id: result.rows[0].product_id,
                     quantity: result.rows[0].quantity
@@ -32,7 +39,7 @@ class OrderStore {
                 id: orderId,
                 user_id: orderResult.rows[0].user_id,
                 status: orderResult.rows[0].status,
-                products: products,
+                products: products
             };
         }
         catch (err) {
@@ -110,7 +117,8 @@ class OrderStore {
             const deleteOrderProductQuery = 'DELETE FROM order_products WHERE order_id=($1) RETURNING *';
             const deleteOrderProductResult = await conn.query(deleteOrderProductQuery, [id]);
             conn.release();
-            if (deleteOrderResult.rows.length === 0 || deleteOrderProductResult.rows.length === 0)
+            if (deleteOrderResult.rows.length === 0 ||
+                deleteOrderProductResult.rows.length === 0)
                 return null;
             return {
                 id,
@@ -134,7 +142,7 @@ class OrderStore {
                 return null;
             // console.log(result.rows.length);
             // console.log(result.rows);
-            let formattedOrders = [
+            const formattedOrders = [
                 {
                     id: 0,
                     user_id: 0,
@@ -183,7 +191,7 @@ class OrderStore {
             conn.release();
             if (result.rows.length === 0)
                 return null;
-            let formattedOrders = [
+            const formattedOrders = [
                 {
                     id: 0,
                     user_id: 0,

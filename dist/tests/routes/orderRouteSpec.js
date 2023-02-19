@@ -61,12 +61,12 @@ describe('Order Handlers Test Suite', () => {
     it('/order/create endpoint should return status of 201', async () => {
         const order = {
             user_id: 1,
-            status: "active",
+            status: 'active',
             products: [
                 {
                     id: 1,
                     quantity: 5,
-                    name: "Product1",
+                    name: 'Product1',
                     price: 22000
                 }
             ]
