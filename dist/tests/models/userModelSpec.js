@@ -17,10 +17,15 @@ describe('User model test suite', () => {
         await store.createUser(user);
     });
     afterAll(async () => {
-        const conn = await database_1.default.connect();
-        const sql = 'DELETE FROM users WHERE username IN ($1, $2)';
-        await conn.query(sql, ['user1', 'user2']);
-        conn.release();
+        try {
+            const conn = await database_1.default.connect();
+            const query = 'TRUNCATE order_products, products, orders, users RESTART IDENTITY';
+            await conn.query(query);
+            conn.release();
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
     });
     it('getAllUsers() should not be empty', async () => {
         const users = await store.getAllUsers();

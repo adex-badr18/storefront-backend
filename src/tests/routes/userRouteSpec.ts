@@ -27,6 +27,28 @@ describe('User Handler Test Suite', () => {
     }
   });
 
+  afterAll(async () => {
+    try {
+      const conn = await client.connect();
+      const query =
+        'TRUNCATE order_products, products, orders, users RESTART IDENTITY';
+      await conn.query(query);
+      conn.release();
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }); afterAll(async () => {
+    try {
+      const conn = await client.connect();
+      const query =
+        'TRUNCATE order_products, products, orders, users RESTART IDENTITY';
+      await conn.query(query);
+      conn.release();
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  });
+
   it('/user/signup endpoint should return status of 200', async () => {
     const res = await request.post('/user/signup').send(user);
     const newUser: User = res.body.user;

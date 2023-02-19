@@ -16,10 +16,15 @@ describe('Product model test suite', () => {
         await store.create(product);
     });
     afterAll(async () => {
-        const conn = await database_1.default.connect();
-        const sql = 'DELETE FROM products WHERE name IN ($1, $2)';
-        await conn.query(sql, ['Hyundai Elantra', 'Lexus G7']);
-        conn.release();
+        try {
+            const conn = await database_1.default.connect();
+            const query = 'TRUNCATE order_products, products, orders, users RESTART IDENTITY';
+            await conn.query(query);
+            conn.release();
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
     });
     it('getAllProducts() should not be empty', async () => {
         const products = await store.getAllProducts();

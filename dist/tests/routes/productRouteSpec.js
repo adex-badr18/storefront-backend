@@ -20,6 +20,17 @@ describe('Product Handler Test Suite', () => {
             throw new Error(`${error}`);
         }
     });
+    afterAll(async () => {
+        try {
+            const conn = await database_1.default.connect();
+            const query = 'TRUNCATE order_products, products, orders, users RESTART IDENTITY';
+            await conn.query(query);
+            conn.release();
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    });
     it('Create and authenticate a user', async () => {
         const user = {
             firstName: 'firstname',
